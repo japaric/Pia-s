@@ -37,6 +37,7 @@ setup:
 # pre-commit hook
 pre-commit:
   git diff --quiet || exit 1
+  just t
   cargo clippy --target {{target}} -p app -- -D warnings
   cargo clippy -p xtask -- -D warnings
   cargo fmt --check
