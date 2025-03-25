@@ -19,6 +19,18 @@ impl IsElement for HtmlDivElement {
     const TAG_NAME: &'static str = "div";
 }
 
+js::inheritance!(HtmlSupElement: HtmlElement);
+
+impl IsElement for HtmlSupElement {
+    const TAG_NAME: &'static str = "sup";
+}
+
+js::inheritance!(HtmlSubElement: HtmlElement);
+
+impl IsElement for HtmlSubElement {
+    const TAG_NAME: &'static str = "sub";
+}
+
 js::inheritance!(HtmlSpanElement: HtmlElement);
 
 impl IsElement for HtmlSpanElement {

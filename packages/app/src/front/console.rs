@@ -1,5 +1,6 @@
+use alloc::format;
 use alloc::string::ToString;
-use music::{Interval, NoteName, Notes, Scale};
+use music::{Chord, Interval, NoteName, NoteNames, Notes, Scale};
 use spur::{Message, Publish as _, React};
 use web::{HtmlDivElement, Node};
 
@@ -10,6 +11,7 @@ use crate::{consts, html};
 
 pub(super) fn initialize(parent: &Node) {
     let container = &html::div(parent, Class::Console);
+    let chord_id = html::div(container, Class::Padded);
     let notes = html::div(container, Class::Padded);
     let intervals = html::div(container, Class::Padded);
 
@@ -17,6 +19,7 @@ pub(super) fn initialize(parent: &Node) {
         state: State {
             intervals,
             notes,
+            chord_id,
             scale: Scale::new(
                 NoteName::CIRCLE_OF_FIFTHS[consts::INITIAL_SCALE_TONIC_INDEX as usize],
             ),
@@ -50,6 +53,7 @@ impl React<ActiveNotesChanged> for Console {
         let Some(State {
             notes,
             intervals,
+            chord_id,
             scale,
             ..
         }) = &mut self.state
@@ -59,6 +63,7 @@ impl React<ActiveNotesChanged> for Console {
 
         notes.replace_children0();
         intervals.replace_children0();
+        chord_id.replace_children0();
 
         let all = held.union(&sustained);
 
@@ -68,10 +73,11 @@ impl React<ActiveNotesChanged> for Console {
 
         display_notes(notes, scale, &all);
         display_intervals(intervals, &all);
+        display_chord_id(chord_id, all, *scale);
     }
 }
 
-fn display_notes(notes: &mut HtmlDivElement, scale: &mut Scale, all: &Notes) {
+fn display_notes(notes: &HtmlDivElement, scale: &mut Scale, all: &Notes) {
     let mut is_first = true;
     for note in all.iter() {
         if !is_first {
@@ -84,7 +90,7 @@ fn display_notes(notes: &mut HtmlDivElement, scale: &mut Scale, all: &Notes) {
     }
 }
 
-fn display_intervals(intervals: &mut HtmlDivElement, all: &Notes) {
+fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
     let mut notes = all.iter();
     let mut last = notes.next().unwrap();
     let mut is_first = true;
@@ -103,8 +109,35 @@ fn display_intervals(intervals: &mut HtmlDivElement, all: &Notes) {
     }
 }
 
+fn display_chord_id(chord_id: &HtmlDivElement, all: Notes, scale: Scale) {
+    let Ok(chord) = Chord::try_from(all) else {
+        return;
+    };
+
+    let mut note_names = NoteNames::empty();
+    for note in chord.notes() {
+        note_names.insert(note.name());
+    }
+
+    let mut is_first = true;
+    for tonic in note_names {
+        if let Some(id) = chord.identify_with_tonic(tonic) {
+            if !is_first {
+                html::span(chord_id, " or ");
+            }
+
+            let span = html::span(chord_id, &format!("{}{}", tonic.as_str(scale), id.normal()));
+            html::sup(&span, &id.sup().to_string());
+            html::sub(&span, &id.sub(scale).to_string());
+
+            is_first = false;
+        }
+    }
+}
+
 struct State {
     scale: Scale,
     notes: HtmlDivElement,
     intervals: HtmlDivElement,
+    chord_id: HtmlDivElement,
 }

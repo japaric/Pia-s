@@ -41,6 +41,10 @@ impl Interval {
         }
     }
 
+    pub fn as_half_steps(&self) -> i8 {
+        *self as i8
+    }
+
     pub fn as_str(&self) -> &'static str {
         use Interval::*;
 

@@ -1,7 +1,7 @@
-use crate::Scale;
+use crate::{Interval, Scale};
 
 #[derive(Clone, Copy, PartialEq)]
-#[cfg_attr(test, derive(Debug))]
+#[cfg_attr(test, derive(Debug, Eq, Ord, PartialOrd))]
 pub enum NoteName {
     C,
     Db,
@@ -50,6 +50,14 @@ impl NoteName {
             10 => Bb,
             _ => B,
         }
+    }
+
+    pub fn distance_to(&self, other: Self) -> Interval {
+        Interval::from_i8_lossy(other as i8 - *self as i8)
+    }
+
+    pub fn step(&self, half_steps: u8) -> NoteName {
+        Self::from_u8_lossy(*self as u8 + half_steps)
     }
 
     pub fn is_natural(&self) -> bool {

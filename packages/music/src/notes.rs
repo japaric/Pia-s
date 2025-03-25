@@ -4,6 +4,7 @@ const SIZE: usize = 128 / 8;
 
 /// A collection of `Note`s
 #[derive(Clone)]
+#[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct Notes {
     bits: [u8; SIZE],
 }
@@ -23,6 +24,20 @@ impl Notes {
 
     pub fn clear(&mut self) {
         self.bits.iter_mut().for_each(|byte| *byte = 0);
+    }
+
+    pub fn contains(&self, note: Note) -> bool {
+        let pos = note.as_u8() as usize;
+        let mask = 1 << (pos % 8);
+        self.bits[pos / 8] & mask != 0
+    }
+
+    pub fn lowest(&self) -> Option<Note> {
+        self.iter().next()
+    }
+
+    pub fn highest(&self) -> Option<Note> {
+        self.iter().last()
     }
 
     pub fn difference(&self, other: &Self) -> Self {
@@ -98,8 +113,8 @@ mod tests {
         assert!(notes.iter().next().is_none());
 
         let c4 = Note::C4;
-        let e4 = c4.step(4).unwrap();
-        let g4 = e4.step(3).unwrap();
+        let e4 = Note::E4;
+        let g4 = Note::G4;
 
         notes.insert(g4);
         assert!(notes.iter().eq([g4]));
@@ -123,7 +138,7 @@ mod tests {
     #[test]
     fn union() {
         let c4 = Note::C4;
-        let e4 = c4.step(4).unwrap();
+        let e4 = Note::E4;
 
         let mut lhs = Notes::empty();
         lhs.insert(c4);
@@ -138,22 +153,13 @@ mod tests {
 
     #[test]
     fn difference() {
-        let c4 = Note::C4;
-        let e4 = c4.step(4).unwrap();
-        let g4 = e4.step(3).unwrap();
-
-        let mut lhs = Notes::empty();
-        lhs.insert(c4);
-        lhs.insert(e4);
-
-        let mut rhs = Notes::empty();
-        rhs.insert(e4);
-        rhs.insert(g4);
+        let lhs = notes![C4, E4];
+        let rhs = notes![E4, G4];
 
         let l_minus_r = lhs.difference(&rhs);
-        assert!(l_minus_r.iter().eq([c4]));
+        assert!(l_minus_r.iter().eq([Note::C4]));
 
         let r_minus_l = rhs.difference(&lhs);
-        assert!(r_minus_l.iter().eq([g4]));
+        assert!(r_minus_l.iter().eq([Note::G4]));
     }
 }

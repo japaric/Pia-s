@@ -1,9 +1,23 @@
 use web::{
     Document, HtmlDivElement, HtmlFieldsetElement, HtmlFormElement, HtmlLegendElement,
-    HtmlOptionElement, HtmlSelectElement, HtmlSpanElement, Node,
+    HtmlOptionElement, HtmlSelectElement, HtmlSpanElement, HtmlSubElement, HtmlSupElement, Node,
 };
 
 use crate::class::Class;
+
+pub fn sub(parent: &Node, text: &str) -> HtmlSubElement {
+    let sub = Document.create_element::<HtmlSubElement>();
+    sub.set_text_content(&text.into());
+    parent.append_child(&sub);
+    sub
+}
+
+pub fn sup(parent: &Node, text: &str) -> HtmlSupElement {
+    let sup = Document.create_element::<HtmlSupElement>();
+    sup.set_text_content(&text.into());
+    parent.append_child(&sup);
+    sup
+}
 
 pub fn div(parent: &Node, class: Class) -> HtmlDivElement {
     let div = Document.create_element::<HtmlDivElement>();

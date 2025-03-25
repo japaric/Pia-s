@@ -14,7 +14,7 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 - Listens to a single MIDI input device, like a MIDI keyboard.
 - Understands common musical scales. Notes outside the scale are highlighted differently. A text overlay indicates the scale degree of each pressed note.
 - Understands the use of the sustain pedal. Notes sustained by the pedal are colored differently than held notes.
-- (TODO) Identifies common chords and their extensions.
+- Identifies common chords and their extensions.
 
 **NOTE** `Pia's` does not produce audio nor MIDI output. Do not expect sound to come from it..
 
