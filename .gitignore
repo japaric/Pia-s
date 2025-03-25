@@ -1,0 +1,4 @@
+*.nix
+.envrc
+/dist
+/target

@@ -1,0 +1,15 @@
+[package]
+edition = "2024"
+name = "xtask"
+publish = false
+
+# (ever wish default features were off ... by default?)
+[dependencies]
+httparse = { version =  "1.10.1", default-features = false, features = ["std"] }
+minifier = { version = "0.3.5", default-features = false }
+minify-html = { version =  "0.16.4", default-features = false }
+minify-js = { version = "0.6.0", default-features = false }
+minijinja = { version = "2.8.0", default-features = false }
+num-format = { version = "0.4.4", default-features = false }
+wasm-encoder = { version = "0.227.1", default-features = false }
+wasmparser = { version = "0.227.1", default-features = false }

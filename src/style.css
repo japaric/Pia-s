@@ -1,0 +1,121 @@
+/* reset style */
+html {
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+}
+/* end of reset style */
+
+body {
+    background-color: #1d1f21;
+    color: #c5c8c6;
+    font-family: monospace;
+}
+
+fieldset {
+    border-width: 1px;
+    border-radius: 1em;
+}
+
+select {
+    cursor: pointer;
+}
+
+.hv-center {
+    height: 100vh;
+    line-height: 100vh;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.column-container {
+    display: flex;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.piano {
+    height: 150px;
+}
+
+.piano-white {
+    stroke-width: 1;
+    paint-order: stroke;
+    stroke: #000000;
+    fill: #ffffff;
+}
+
+.piano-white.out-of-key {
+    fill: #888888;
+}
+
+.piano-white.out-of-key.pressed {
+    fill: #e7c547;
+}
+
+.piano-white.out-of-key.sustained:not(.pressed) {
+    fill: #b39837;
+}
+
+.piano-white.pressed {
+    fill: #b9ca4a;
+}
+
+.piano-white.sustained:not(.pressed) {
+    fill: #8c9938;
+}
+
+.piano-black.out-of-key.pressed {
+    fill: #e7c547;
+}
+
+.piano-black.out-of-key.sustained:not(.pressed) {
+    fill: #b39837;
+}
+
+.piano-black.pressed {
+    fill: #b9ca4a;
+}
+
+.piano-black.sustained:not(.pressed) {
+    fill: #8c9938;
+}
+
+.piano-black {
+    stroke-width: 1;
+    paint-order: stroke;
+    stroke: #000000;
+    fill: #000000;
+}
+
+.piano-black.out-of-key {
+    fill: #888888;
+}
+
+.degree:not(.sustained):not(.pressed) {
+    display: none;
+}
+
+.octave {
+    font-size: 2em;
+    fill: #444444;
+}
+
+.console {
+    font-size: 3em;
+    text-align: center;
+}
+
+.padded {
+    padding-bottom: 0.25em;
+    padding-top: 0.25em;
+}

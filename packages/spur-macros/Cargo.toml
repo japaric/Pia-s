@@ -1,0 +1,12 @@
+[package]
+edition = "2024"
+name = "spur-macros"
+publish = false
+
+[lib]
+proc-macro = true
+
+[dependencies]
+indexmap = { version = "2.8.0", default-features = false, features = ["std"] }
+quote = { version = "1.0.40", default-features = false }
+syn = { version = "2.0.100", default-features = false, features = ["derive", "parsing", "printing", "proc-macro"] }

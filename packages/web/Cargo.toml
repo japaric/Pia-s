@@ -1,0 +1,7 @@
+[package]
+edition = "2024"
+name = "web"
+publish = false
+
+[dependencies]
+js.workspace = true

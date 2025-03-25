@@ -1,0 +1,13 @@
+[package]
+edition = "2024"
+name = "app"
+publish = false
+
+[dependencies]
+tlsf = { version =  "1.1.0", default-features = false }
+
+js.workspace = true
+music.workspace = true
+nosync.workspace = true
+spur.workspace = true
+web.workspace = true

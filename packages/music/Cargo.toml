@@ -1,0 +1,7 @@
+[package]
+edition = "2024"
+name = "music"
+publish = false
+
+[lib]
+doctest = false

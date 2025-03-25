@@ -1,0 +1,9 @@
+[package]
+edition = "2024"
+name = "spur"
+publish = false
+
+[dependencies]
+nosync.workspace = true
+spur-macros.workspace = true
+web.workspace = true

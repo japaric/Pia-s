@@ -1,0 +1,95 @@
+console.log("commit-hash: {{commit_hash}}");
+
+// heap of JS objects based on wasm-bindgen's design
+// https://rustwasm.github.io/wasm-bindgen/contributing/design/js-objects-in-rust.html
+let HEAP = (function () {
+    let array = new Array();
+    array.push(
+        undefined,     // 0
+        document,      // 1
+        document.body, // 2
+        navigator,     // 3
+        true,          // 4
+        false,         // 5
+        null,          // 6
+        console,       // 7
+    );
+    let min_index = array.length;
+    let hole = array.length;
+
+    return {
+        add(object) {
+            if (typeof object == "undefined") {
+                throw new Error("tried to insert an undefined object into the heap");
+            }
+
+            if (hole == array.length) {
+                array.push(array.length + 1);
+            }
+
+            let index = hole;
+            hole = array[index];
+
+            array[index] = object;
+            return index;
+        },
+
+        rm(index) {
+            if (index < min_index) {
+                throw new Error("tried to remove a 'static object from the heap");
+            }
+
+            array[index] = hole;
+            hole = index;
+        },
+
+        get(index) {
+            if (index >= array.length) {
+                throw new Error(
+                    "requested non-existent object with index " + index,
+                );
+            }
+
+            return array[index];
+        },
+    };
+})();
+
+let WASM = (function () {
+    let bytes;
+    let exports;
+    let textDecoder = new TextDecoder();
+
+    return {
+        function(index) {
+            return exports.__indirect_function_table.get(index);
+        },
+
+        memory(ptr, len) {
+            return bytes.subarray(ptr, ptr + len);
+        },
+
+        text(ptr, len) {
+            return textDecoder.decode(this.memory(ptr, len));
+        },
+
+        async run(path, env) {
+            let resp = await fetch(path);
+            let resp_bytes = await resp.arrayBuffer();
+            let obj = await WebAssembly.instantiate(resp_bytes, { env });
+            exports = obj.instance.exports;
+            bytes = new Uint8Array(exports.memory.buffer);
+            exports._start();
+        },
+    };
+})();
+
+WASM.run(
+    "app.wasm",
+    (function () {
+        return {
+            {% for func in env %} {{func}},
+            {% endfor %}
+        };
+    })(),
+);

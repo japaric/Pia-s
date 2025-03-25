@@ -1,0 +1,17 @@
+[workspace]
+members = ["packages/*"]
+resolver = "2"
+
+# (this feels sort of redundant :shrug:)
+[workspace.dependencies]
+js.path = "packages/js"
+music.path = "packages/music"
+nosync.path = "packages/nosync"
+spur-macros.path = "packages/spur-macros"
+spur.path = "packages/spur"
+web.path = "packages/web"
+
+[profile.release]
+codegen-units = 1
+lto = 'fat'
+opt-level = 'z'
