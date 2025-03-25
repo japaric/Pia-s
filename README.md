@@ -20,7 +20,7 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 
 ## Build dependencies
 
-See [`shell.nix`](/.shell.nix).
+See [`shell.nix`](./shell.nix).
 
 ## Usage
 
