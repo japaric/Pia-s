@@ -6,7 +6,7 @@
 
 In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (🎹).
 
-`Pia's` is also my first try at written a small WASM web application.
+`Pia's` is also my first try at writting a small WASM web application.
 
 ## Features
 
