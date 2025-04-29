@@ -51,53 +51,27 @@ select {
     stroke-width: 1;
     paint-order: stroke;
     stroke: #000000;
+}
+
+.piano-white:not(.pressed):not(.sustained) {
     fill: #ffffff;
 }
 
-.piano-white.out-of-key {
+.piano-white.out-of-key:not(.pressed):not(.sustained) {
     fill: #888888;
-}
-
-.piano-white.out-of-key.pressed {
-    fill: #e7c547;
-}
-
-.piano-white.out-of-key.sustained:not(.pressed) {
-    fill: #b39837;
-}
-
-.piano-white.pressed {
-    fill: #b9ca4a;
-}
-
-.piano-white.sustained:not(.pressed) {
-    fill: #8c9938;
-}
-
-.piano-black.out-of-key.pressed {
-    fill: #e7c547;
-}
-
-.piano-black.out-of-key.sustained:not(.pressed) {
-    fill: #b39837;
-}
-
-.piano-black.pressed {
-    fill: #b9ca4a;
-}
-
-.piano-black.sustained:not(.pressed) {
-    fill: #8c9938;
 }
 
 .piano-black {
     stroke-width: 1;
     paint-order: stroke;
     stroke: #000000;
+}
+
+.piano-black:not(.pressed):not(.sustained) {
     fill: #000000;
 }
 
-.piano-black.out-of-key {
+.piano-black.out-of-key:not(.pressed):not(.sustained) {
     fill: #888888;
 }
 
@@ -118,4 +92,64 @@ select {
 .padded {
     padding-bottom: 0.25em;
     padding-top: 0.25em;
+}
+
+/* red (primary) */
+.\31 /* = 1 */ {
+    fill: #f98089;
+}
+
+/* red orange (tertiary) */
+.\35 /* = 5 */ {
+    fill: #ffa894;
+}
+
+/* orange (secondary) */
+.\32 /* = 2 */ {
+    fill: #fecc87;
+}
+
+/* yellow orange (tertiary) */
+.\36 /* = 6 */ {
+    fill: #f9e380;
+}
+
+/* yellow (primary) */
+.\33 /* = 3 */ {
+    fill: #fff490;
+}
+
+/* yellow green (tertiary) */
+.\37 /* = 7 */ {
+    fill: #eaefac;
+}
+
+/* green (secondary) */
+.♯4 {
+    fill: #b7e5a5;
+}
+
+/* blue green (tertiary) */
+.♭2 {
+    fill: #81e8e5;
+}
+
+/* blue (primary) */
+.♭6 {
+    fill: #88d2f9;
+}
+
+/* blue violet (tertiary) */
+.♭3 {
+    fill: #a8b7e0;
+}
+
+/* violet (secondary) */
+.♭7 {
+    fill: #c193b8;
+}
+
+/* red violet (tertiary) */
+.\34 /* = 4 */ {
+    fill: #f9b7c5;
 }

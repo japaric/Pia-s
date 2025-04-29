@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 use alloc::{string::ToString, vec};
 
 use js::Integer;
-use music::{Note, NoteName, Scale, ScaleType};
+use music::{Degree, Note, NoteName, Scale, ScaleType};
 use scale_factor::ScaleFactor;
 use web::{DominantBaseline, SVGRectElement, SVGSVGElement, SVGTextElement};
 
@@ -111,6 +111,14 @@ impl Piano {
         for (note, (key, text)) in notes().zip(&self.labeled_keys) {
             let degree = scale.name2degree(note.name());
             text.set_text_content(&degree.as_str().into());
+
+            for other in Degree::ALL {
+                if degree == other {
+                    key.add_class(&degree.as_str().into());
+                } else {
+                    key.rm_class(&other.as_str().into());
+                }
+            }
 
             let class_js = js::String::from(Class::OutOfKey.as_str());
             if degree.belongs_to(scale_ty) {

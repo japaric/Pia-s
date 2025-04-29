@@ -17,6 +17,21 @@ pub enum Degree {
 }
 
 impl Degree {
+    pub const ALL: [Self; 12] = [
+        Self::One,
+        Self::FlatTwo,
+        Self::Two,
+        Self::FlatThree,
+        Self::Three,
+        Self::Four,
+        Self::SharpFour,
+        Self::Five,
+        Self::FlatSix,
+        Self::Six,
+        Self::FlatSeven,
+        Self::Seven,
+    ];
+
     pub const IONIAN: [Self; 7] = [
         Self::One,
         Self::Two,

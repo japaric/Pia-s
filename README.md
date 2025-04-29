@@ -13,10 +13,40 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 - Full size (88-key) keyboard visualization.
 - Listens to a single MIDI input device, like a MIDI keyboard.
 - Understands common musical scales. Notes outside the scale are highlighted differently. A text overlay indicates the scale degree of each pressed note.
-- Understands the use of the sustain pedal. Notes sustained by the pedal are colored differently than held notes.
+- Understands the use of the sustain pedal. ~~Notes sustained by the pedal are colored differently than held notes.~~ (to be added back)
 - Identifies common chords and their extensions.
+- Pressed / held keys are colored according to their relationship to the tonic center, i.e. each scale degree has its own color.
 
 **NOTE** `Pia's` does not produce audio nor MIDI output. Do not expect sound to come from it..
+
+## Color theme
+
+The color theme has been chosen by overlaying the 12-color wheel (with red, yellow and blue as primary colors) on top of the circle of fifths.
+
+That results in the following colors, going through the circle of fifths in clockwise direction.
+
+| Degree | Color                    |
+|:------:|:------------------------:|
+| 1      | red (primary)            |
+| 5      | red orange (tertiary)    |
+| 2      | orange (secondary)       |
+| 6      | yellow orange (tertiary) |
+| 3      | yellow (primary)         |
+| 7      | yellow green (tertiary)  |
+| ♯4     | green (secondary)        |
+| ♭2     | blue green (tertiary)    |
+| ♭6     | blue (primary)           |
+| ♭3     | blue violet (tertiary)   |
+| ♭7     | violet (secondary)       |
+| 4      | red violet (tertiary)    |
+
+That means that the notes in major scales get red/yellow colors, which are considered "warm".
+
+![A musical keyboard with the notes in the C major scale highlighted in red yellow colors](./images/major-scale.png)
+
+Whereas the minor scales include some blue-ish colors which are considered "cool".
+
+![A musical keyboard with the notes in the A minor scale highlighted in red yellow colors as well as blue-ish colors](./images/minor-scale.png)
 
 ## Build dependencies
 
