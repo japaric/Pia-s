@@ -52,7 +52,11 @@ Whereas the minor scales include some blue-ish colors which are considered "cool
 
 See [`shell.nix`](./shell.nix).
 
-## Usage
+## Live/hosted instance
+
+May be out of date: https://japaric.github.io/Pia-s
+
+## Run/host locally
 
 0. Connect a MIDI input device to your computer. Note that you can also connect a virtual MIDI loopback device, like 'MIDI Through' on Linux, to the web application and drive it entirely by software, e.g. a DAW.
 
