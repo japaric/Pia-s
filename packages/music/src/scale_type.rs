@@ -32,7 +32,7 @@ impl ScaleType {
             Lydian => "Lydian",
             Mixolydian => "Mixolydian",
             Minor => "Minor",
-            HarmonicMinor => "HarmonicM inor",
+            HarmonicMinor => "Harmonic Minor",
         }
     }
 
