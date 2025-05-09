@@ -46,6 +46,17 @@ pre-commit:
 serve: build
   just xtask serve
 
+# publish webapp to GH pages
+[working-directory: 'dist']
+publish: build
+  touch .nojekyll
+  git init
+  git branch -m gh-pages
+  git add .
+  git commit -m '.'
+  git remote add origin $(cd .. && git remote get-url origin)
+  git push -f origin gh-pages
+
 [private]
 xtask task:
   cargo r -p xtask -- {{task}}
