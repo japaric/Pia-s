@@ -51,28 +51,40 @@ select {
     stroke-width: 1;
     paint-order: stroke;
     stroke: #000000;
-}
-
-.piano-white:not(.pressed):not(.sustained) {
     fill: #ffffff;
 }
 
-.piano-white.out-of-key:not(.pressed):not(.sustained) {
-    fill: #888888;
+.piano-white.sustained {
+    fill: #000000;
+}
+
+.piano-white.out-of-key {
+    fill: #c0c0c0;
 }
 
 .piano-black {
     stroke-width: 1;
     paint-order: stroke;
     stroke: #000000;
-}
-
-.piano-black:not(.pressed):not(.sustained) {
     fill: #000000;
 }
 
-.piano-black.out-of-key:not(.pressed):not(.sustained) {
-    fill: #888888;
+.piano-black.out-of-key {
+    fill: #808080;
+}
+
+.piano-color {
+    stroke-width: 1;
+    paint-order: stroke;
+    stroke: #000000;
+}
+
+.piano-color:not(.pressed):not(.sustained):not(.overtone) {
+    opacity: 0%;
+}
+
+.pressed {
+    opacity: 100%;
 }
 
 .sustained {

@@ -1,3 +1,4 @@
+use alloc::collections::btree_map::BTreeMap;
 use music::{NoteName, Notes, ScaleType};
 use piano::Piano;
 use spur::{Message, Publish as _, React};
@@ -33,6 +34,7 @@ pub struct Initialize {
 
 struct State {
     last_held: Notes,
+    last_overtone: Notes,
     last_sustained: Notes,
     piano: Piano,
     scale_tonic: NoteName,
@@ -45,6 +47,7 @@ impl React<Initialize> for Canvas {
             piano,
             last_held: Notes::empty(),
             last_sustained: Notes::empty(),
+            last_overtone: Notes::empty(),
             scale_tonic: NoteName::CIRCLE_OF_FIFTHS[consts::INITIAL_SCALE_TONIC_INDEX as usize],
             scale_type: ScaleType::ALL[consts::INITIAL_SCALE_TYPE_INDEX as usize],
         });
@@ -96,6 +99,7 @@ impl React<ActiveNotesChanged> for Canvas {
         let Some(State {
             last_held,
             last_sustained,
+            last_overtone,
             piano,
             ..
         }) = &mut self.state
@@ -119,7 +123,43 @@ impl React<ActiveNotesChanged> for Canvas {
             piano.sustain_off(note);
         }
 
+        let mut overtone_power = BTreeMap::new();
+        for note in current_held.union(&current_sustained) {
+            for (half_steps, den) in OVERTONES.iter().copied().zip(2..) {
+                if let Ok(note) = note.step(half_steps) {
+                    if current_held.contains(note) || current_sustained.contains(note) {
+                        continue;
+                    }
+
+                    *overtone_power.entry(note).or_default() += 1. / den as f64;
+                }
+            }
+        }
+
+        for (note, power) in &overtone_power {
+            piano.overtone_on(*note, *power);
+        }
+
+        for note in last_overtone.clone() {
+            if !overtone_power.contains_key(&note) {
+                piano.overtone_off(note);
+            }
+        }
+
+        *last_overtone = overtone_power.keys().copied().collect();
         *last_held = current_held;
         *last_sustained = current_sustained;
     }
 }
+
+const OVERTONES: &[i8] = &[
+    12, // P8
+    19, // P8 + P5
+    24, // 2*P8
+    28, // 2*P8+M3
+    31, // 2*P8+P5
+    34, // 2*P8+m7
+    36, // 3*P8
+    38, // 3*P8+M2
+    40, // 3*P8+M3
+];

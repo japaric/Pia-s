@@ -4,7 +4,7 @@ use core::fmt;
 
 use crate::{Error, NoteName, Scale};
 
-#[derive(Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 #[cfg_attr(test, derive(Debug))]
 pub struct Note(u8);
 

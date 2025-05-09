@@ -71,6 +71,16 @@ impl Notes {
     }
 }
 
+impl FromIterator<Note> for Notes {
+    fn from_iter<T: IntoIterator<Item = Note>>(iter: T) -> Self {
+        let mut notes = Notes::empty();
+        for note in iter {
+            notes.insert(note);
+        }
+        notes
+    }
+}
+
 impl IntoIterator for Notes {
     type Item = Note;
     type IntoIter = Iter;

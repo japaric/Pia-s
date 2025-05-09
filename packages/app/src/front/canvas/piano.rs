@@ -19,7 +19,14 @@ const BLACK_KEY_HEIGHT: &str = "60%";
 const BLACK_KEY_TEXT_HEIGHT: &str = "30%";
 
 pub struct Piano {
-    labeled_keys: Vec<(SVGRectElement, SVGTextElement)>,
+    labeled_keys: Vec<Key>,
+}
+
+#[derive(Clone)]
+struct Key {
+    back: SVGRectElement,
+    front: SVGRectElement,
+    label: SVGTextElement,
 }
 
 impl Piano {
@@ -39,9 +46,17 @@ impl Piano {
         for (index, note) in notes().filter(|note| note.is_natural()).enumerate() {
             let x = index as f64 * white_key_width;
             let rect_x = js::String::from(Percentage(x).to_string().as_str());
-            let rect = svg::rect(
+            let back_rect = svg::rect(
                 parent,
                 Class::PianoWhite,
+                &rect_x,
+                &Integer::from(0),
+                &white_key_width_js,
+                &white_key_height_js,
+            );
+            let front_rect = svg::rect(
+                parent,
+                Class::PianoColor,
                 &rect_x,
                 &Integer::from(0),
                 &white_key_width_js,
@@ -60,7 +75,11 @@ impl Piano {
                 text.set_text_content(&circled_octave(note.octave()));
             }
 
-            keys[note2index(note)] = Some((rect, text));
+            keys[note2index(note)] = Some(Key {
+                back: back_rect,
+                front: front_rect,
+                label: text,
+            });
         }
 
         let black_key_height_js = js::String::from(BLACK_KEY_HEIGHT);
@@ -79,7 +98,7 @@ impl Piano {
             let rect_x_js = js::String::from(Percentage(rect_x).to_string().as_str());
             // put a black rectangle behind so we can apply opacity here in the same way we can
             // apply it to the white keys
-            let _bg_rect = svg::rect(
+            let back_rect = svg::rect(
                 parent,
                 Class::PianoBlack,
                 &rect_x_js,
@@ -87,9 +106,9 @@ impl Piano {
                 &black_key_width_js,
                 &black_key_height_js,
             );
-            let rect = svg::rect(
+            let front_rect = svg::rect(
                 parent,
-                Class::PianoBlack,
+                Class::PianoColor,
                 &rect_x_js,
                 &Integer::from(0),
                 &black_key_width_js,
@@ -102,7 +121,11 @@ impl Piano {
             text.set_class_name(&Class::Degree.as_str().into());
 
             rect_x += width;
-            keys[note2index(note)] = Some((rect, text));
+            keys[note2index(note)] = Some(Key {
+                back: back_rect,
+                front: front_rect,
+                label: text,
+            });
         }
 
         let piano = Self {
@@ -118,60 +141,78 @@ impl Piano {
     pub fn set_scale(&self, tonic: NoteName, scale_ty: ScaleType) {
         let scale = Scale::new(tonic);
 
-        for (note, (key, text)) in notes().zip(&self.labeled_keys) {
+        for (note, key) in notes().zip(&self.labeled_keys) {
             let degree = scale.name2degree(note.name());
-            text.set_text_content(&degree.as_str().into());
+            key.label.set_text_content(&degree.as_str().into());
 
             for other in Degree::ALL {
                 if degree == other {
-                    key.add_class(&degree.as_str().into());
+                    key.front.add_class(&degree.as_str().into());
                 } else {
-                    key.rm_class(&other.as_str().into());
+                    key.front.rm_class(&other.as_str().into());
                 }
             }
 
             let class_js = js::String::from(Class::OutOfKey.as_str());
             if degree.belongs_to(scale_ty) {
-                key.rm_class(&class_js);
+                key.back.rm_class(&class_js);
             } else {
-                key.add_class(&class_js);
+                key.back.add_class(&class_js);
             }
         }
     }
 
     pub fn pressed(&self, note: Note) {
-        if let Some((key, text)) = self.get(note) {
+        if let Some(key) = self.get(note) {
             let class = js::String::from(Class::Pressed.as_str());
-            text.add_class(&class);
-            key.add_class(&class);
+            key.label.add_class(&class);
+            key.front.add_class(&class);
         }
     }
 
     pub fn released(&self, note: Note) {
-        if let Some((key, text)) = self.get(note) {
+        if let Some(key) = self.get(note) {
             let class = js::String::from(Class::Pressed.as_str());
-            text.rm_class(&class);
-            key.rm_class(&class);
+            key.label.rm_class(&class);
+            key.front.rm_class(&class);
         }
     }
 
     pub fn sustain_on(&self, note: Note) {
-        if let Some((key, text)) = self.get(note) {
+        if let Some(key) = self.get(note) {
             let class = js::String::from(Class::Sustained.as_str());
-            text.add_class(&class);
-            key.add_class(&class);
+            key.label.add_class(&class);
+            key.front.add_class(&class);
+            key.back.add_class(&class);
         }
     }
 
     pub fn sustain_off(&self, note: Note) {
-        if let Some((key, text)) = self.get(note) {
+        if let Some(key) = self.get(note) {
             let class = js::String::from(Class::Sustained.as_str());
-            text.rm_class(&class);
-            key.rm_class(&class);
+            key.label.rm_class(&class);
+            key.front.rm_class(&class);
+            key.back.rm_class(&class);
         }
     }
 
-    fn get(&self, note: Note) -> Option<&(SVGRectElement, SVGTextElement)> {
+    pub fn overtone_on(&self, note: Note, power: f64) {
+        if let Some(key) = self.get(note) {
+            let class = js::String::from(Class::Overtone.as_str());
+            key.front.add_class(&class);
+            let opacity = 0.8 * power;
+            key.front.set_opacity(&js::Float::from(opacity));
+        }
+    }
+
+    pub fn overtone_off(&self, note: Note) {
+        if let Some(key) = self.get(note) {
+            let class = js::String::from(Class::Overtone.as_str());
+            key.front.rm_class(&class);
+        }
+    }
+
+    fn get(&self, note: Note) -> Option<&Key> {
         self.labeled_keys.get(note2index(note))
     }
 }

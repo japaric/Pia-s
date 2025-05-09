@@ -43,6 +43,10 @@ impl SVGRectElement {
         self.set_attribute(&"width".into(), width);
     }
 
+    pub fn set_opacity(&self, x: &js::Value) {
+        self.set_attribute(&"opacity".into(), x);
+    }
+
     pub fn set_x(&self, x: &js::Value) {
         self.set_attribute(&"x".into(), x);
     }

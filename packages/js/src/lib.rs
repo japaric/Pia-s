@@ -4,6 +4,7 @@
 mod macros;
 mod array;
 mod boolean;
+mod float;
 mod function;
 mod integer;
 mod iterator;
@@ -17,6 +18,7 @@ mod value;
 
 pub use array::Array;
 pub use boolean::*;
+pub use float::Float;
 pub use function::Function;
 pub use integer::Integer;
 pub use iterator::Iterator;

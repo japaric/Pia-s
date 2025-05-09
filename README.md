@@ -16,6 +16,7 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 - Understands the use of the sustain pedal. Notes sustained by the pedal are colored differently than held notes.
 - Identifies common chords and their extensions.
 - Pressed / held keys are colored according to their relationship to the tonic center, i.e. each scale degree has its own color.
+- Highlights the overtones of the pressed note.
 
 **NOTE** `Pia's` does not produce audio nor MIDI output. Do not expect sound to come from it..
 
@@ -48,6 +49,34 @@ Whereas the minor scales include some blue-ish colors which are considered "cool
 
 ![A musical keyboard with the notes in the A minor scale highlighted in red yellow colors as well as blue-ish colors](./images/minor-scale.png)
 
+## Highlighting overtones
+
+When you pluck the A3 string on a guitar, more than one pitch at 220Hz is heard.
+One hears the fundamental frequency and the overtones, frequencies which are multiple of the fundamental frequency.
+`Pia's` highlights these overtones but with less intensity than the pressed note;
+this mimics reality (as far as acoustic instruments go) as overtones often have less power than the fundamental frequency.
+
+The overtones can be mapped back to an interval with respect to the fundamental frequency.
+Consider the following table which lists the overtones of the A2 note (assuming 12-tone equal temperament).
+
+| Frequency (Hz) | ~Note | Interval | Half steps |
+|:--------------:|:-----:|:--------:|------------|
+| 110            | A2    | P0       | 0          |
+| 220            | A3    | P8       | 12         |
+| 330            | E4    | P8+P5    | 19         |
+| 440            | A4    | 2*P8     | 24         |
+| 550            | C#5   | 2*P8+M3  | 28         |
+| 660            | E5    | 2*P8+P5  | 31         |
+| 770            | G5    | 2*P8+m7  | 34         |
+| 880            | A5    | 3*P8     | 36         |
+| 990            | B5    | 3*P8+M2  | 38         |
+| 1100           | C#6   | 3*P8+M3  | 40         |
+| (..)           | (..)  | (..)     |            |
+ 
+These intervals will hold regardless of the note pressed.
+
+![A musical keyboard where the pressed note C4 is highlighted in red and its overtones C5, G5, etc. are also highlighted but to a lesser extend](./images/overtones.png)
+
 ## Build dependencies
 
 See [`shell.nix`](./shell.nix).
@@ -65,7 +94,6 @@ May be out of date: https://japaric.github.io/Pia-s
 ``` console
 $ just serve
 ```
-
 
 2. Browse to `http://localhost:8000`.
 

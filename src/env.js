@@ -16,6 +16,10 @@ function $Integer$from_u32(integer) {
     return HEAP.add(integer);
 }
 
+function $Float$from_f64(float) {
+    return HEAP.add(float);
+}
+
 function $Object$call(object, property, args) {
     let retval = HEAP.get(object)[HEAP.get(property)](...HEAP.get(args));
     if (typeof retval == "undefined") {
