@@ -13,7 +13,7 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 - Full size (88-key) keyboard visualization.
 - Listens to a single MIDI input device, like a MIDI keyboard.
 - Understands common musical scales. Notes outside the scale are highlighted differently. A text overlay indicates the scale degree of each pressed note.
-- Understands the use of the sustain pedal. ~~Notes sustained by the pedal are colored differently than held notes.~~ (to be added back)
+- Understands the use of the sustain pedal. Notes sustained by the pedal are colored differently than held notes.
 - Identifies common chords and their extensions.
 - Pressed / held keys are colored according to their relationship to the tonic center, i.e. each scale degree has its own color.
 

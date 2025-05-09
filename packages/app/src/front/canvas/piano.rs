@@ -77,6 +77,16 @@ impl Piano {
             }
 
             let rect_x_js = js::String::from(Percentage(rect_x).to_string().as_str());
+            // put a black rectangle behind so we can apply opacity here in the same way we can
+            // apply it to the white keys
+            let _bg_rect = svg::rect(
+                parent,
+                Class::PianoBlack,
+                &rect_x_js,
+                &Integer::from(0),
+                &black_key_width_js,
+                &black_key_height_js,
+            );
             let rect = svg::rect(
                 parent,
                 Class::PianoBlack,

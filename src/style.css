@@ -75,6 +75,10 @@ select {
     fill: #888888;
 }
 
+.sustained {
+    opacity: 80%;
+}
+
 .degree:not(.sustained):not(.pressed) {
     display: none;
 }
