@@ -1,4 +1,5 @@
 [package]
 edition = "2024"
+license = "MIT OR Apache-2.0"
 name = "js"
 publish = false
