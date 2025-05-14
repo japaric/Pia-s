@@ -96,7 +96,7 @@ fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
     let mut is_first = true;
     for note in notes {
         let half_steps = last.distance_to(note);
-        let interval = Interval::from_i8_lossy(half_steps);
+        let interval = Interval::from_u8_lossy(half_steps.unsigned_abs());
 
         if !is_first {
             html::span(intervals, " ");

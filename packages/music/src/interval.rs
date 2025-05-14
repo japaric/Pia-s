@@ -14,19 +14,21 @@ pub enum Interval {
     M6,
     m7,
     M7,
+    P8,
 }
 
 impl Interval {
-    pub fn from_i8_lossy(mut value: i8) -> Self {
+    pub fn from_u8_lossy(mut value: u8) -> Self {
         use Interval::*;
 
-        value %= 12;
-        if value < 0 {
-            value += 12;
+        if value == 0 {
+            return P0;
         }
 
+        value %= 12;
+
         match value {
-            0 => P0,
+            0 => P8,
             1 => m2,
             2 => M2,
             3 => m3,
@@ -61,6 +63,7 @@ impl Interval {
             M6 => "M6",
             m7 => "m7",
             M7 => "M7",
+            P8 => "P8",
         }
     }
 }
@@ -71,21 +74,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn from_i8_lossy() {
+    fn from_u8_lossy() {
         use Interval::*;
 
-        assert_eq!(P0, Interval::from_i8_lossy(0));
+        assert_eq!(P0, Interval::from_u8_lossy(0));
 
-        assert_eq!(m2, Interval::from_i8_lossy(1));
-        assert_eq!(m2, Interval::from_i8_lossy(13));
+        assert_eq!(m2, Interval::from_u8_lossy(1));
+        assert_eq!(m2, Interval::from_u8_lossy(13));
 
-        assert_eq!(M7, Interval::from_i8_lossy(11));
-        assert_eq!(M7, Interval::from_i8_lossy(23));
-
-        assert_eq!(M7, Interval::from_i8_lossy(-1));
-        assert_eq!(M7, Interval::from_i8_lossy(-13));
-
-        assert_eq!(m2, Interval::from_i8_lossy(-11));
-        assert_eq!(m2, Interval::from_i8_lossy(-23));
+        assert_eq!(M7, Interval::from_u8_lossy(11));
+        assert_eq!(M7, Interval::from_u8_lossy(23));
     }
 }

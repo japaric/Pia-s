@@ -53,7 +53,7 @@ impl NoteName {
     }
 
     pub fn distance_to(&self, other: Self) -> Interval {
-        Interval::from_i8_lossy(other as i8 - *self as i8)
+        Interval::from_u8_lossy((other as i8 - *self as i8).unsigned_abs())
     }
 
     pub fn step(&self, half_steps: u8) -> NoteName {
