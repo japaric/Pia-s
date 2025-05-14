@@ -133,6 +133,15 @@ fn display_chord_id(chord_id: &HtmlDivElement, all: Notes, scale: Scale) {
             is_first = false;
         }
     }
+
+    let found_no_id = is_first;
+    if found_no_id {
+        let intentionally_blank = "　";
+
+        let span = html::span(chord_id, intentionally_blank);
+        html::sup(&span, intentionally_blank);
+        html::sub(&span, intentionally_blank);
+    }
 }
 
 struct State {
