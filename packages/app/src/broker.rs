@@ -17,6 +17,7 @@ const _: Broker = {
     const _: Canvas = Canvas::new();
 
     #[subscribed(to = crate::front::console::Initialize)]
+    #[subscribed(to = crate::messages::NewScaleTonicSelected)]
     #[subscribed(to = crate::messages::ActiveNotesChanged)]
     const _: Console = Console::new();
 

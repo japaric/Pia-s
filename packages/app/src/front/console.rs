@@ -6,7 +6,7 @@ use web::{HtmlDivElement, Node};
 
 use crate::broker::Broker;
 use crate::class::Class;
-use crate::messages::ActiveNotesChanged;
+use crate::messages::{ActiveNotesChanged, NewScaleTonicSelected};
 use crate::{consts, html};
 
 pub(super) fn initialize(parent: &Node) {
@@ -17,6 +17,7 @@ pub(super) fn initialize(parent: &Node) {
 
     Broker::publish(Initialize {
         state: State {
+            held_and_sustained: Notes::empty(),
             intervals,
             notes,
             chord_id,
@@ -50,41 +51,33 @@ pub struct Initialize {
 
 impl React<ActiveNotesChanged> for Console {
     fn react(&mut self, ActiveNotesChanged { held, sustained }: ActiveNotesChanged) {
-        let Some(State {
-            notes,
-            intervals,
-            chord_id,
-            scale,
-            ..
-        }) = &mut self.state
-        else {
+        let Some(state) = &mut self.state else {
             return;
         };
 
-        notes.replace_children0();
-        intervals.replace_children0();
-        chord_id.replace_children0();
-
-        let all = held.union(&sustained);
-
-        if all.len() < 2 {
-            return;
-        }
-
-        display_notes(notes, scale, &all);
-        display_intervals(intervals, &all);
-        display_chord_id(chord_id, all, *scale);
+        state.held_and_sustained = held.union(&sustained);
+        state.refresh();
     }
 }
 
-fn display_notes(notes: &HtmlDivElement, scale: &mut Scale, all: &Notes) {
+impl React<NewScaleTonicSelected> for Console {
+    fn react(&mut self, NewScaleTonicSelected(index): NewScaleTonicSelected) {
+        if let Some(state) = &mut self.state {
+            let tonic = NoteName::CIRCLE_OF_FIFTHS[index];
+            state.scale = Scale::new(tonic);
+            state.refresh();
+        }
+    }
+}
+
+fn display_notes(notes: &HtmlDivElement, scale: Scale, all: &Notes) {
     let mut is_first = true;
     for note in all.iter() {
         if !is_first {
             html::span(notes, " ");
         }
 
-        html::span(notes, &note.display(*scale).to_string());
+        html::span(notes, &note.display(scale).to_string());
 
         is_first = false;
     }
@@ -109,8 +102,8 @@ fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
     }
 }
 
-fn display_chord_id(chord_id: &HtmlDivElement, all: Notes, scale: Scale) {
-    let Ok(chord) = Chord::try_from(all) else {
+fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: Scale) {
+    let Ok(chord) = Chord::try_from(all.clone()) else {
         return;
     };
 
@@ -145,8 +138,33 @@ fn display_chord_id(chord_id: &HtmlDivElement, all: Notes, scale: Scale) {
 }
 
 struct State {
+    held_and_sustained: Notes,
     scale: Scale,
     notes: HtmlDivElement,
     intervals: HtmlDivElement,
     chord_id: HtmlDivElement,
+}
+
+impl State {
+    fn refresh(&self) {
+        let Self {
+            scale,
+            notes,
+            intervals,
+            chord_id,
+            held_and_sustained,
+        } = self;
+
+        notes.replace_children0();
+        intervals.replace_children0();
+        chord_id.replace_children0();
+
+        if held_and_sustained.len() < 2 {
+            return;
+        }
+
+        display_notes(notes, *scale, held_and_sustained);
+        display_intervals(intervals, held_and_sustained);
+        display_chord_id(chord_id, held_and_sustained, *scale);
+    }
 }
