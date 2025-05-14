@@ -1,6 +1,6 @@
 use alloc::format;
 use alloc::string::ToString;
-use music::{Chord, Interval, NoteName, NoteNames, Notes, Scale};
+use music::{Chord, Interval, MajorScale, NoteName, NoteNames, Notes};
 use spur::{Message, Publish as _, React};
 use web::{HtmlDivElement, Node};
 
@@ -21,7 +21,7 @@ pub(super) fn initialize(parent: &Node) {
             intervals,
             notes,
             chord_id,
-            scale: Scale::new(
+            scale: MajorScale::new(
                 NoteName::CIRCLE_OF_FIFTHS[consts::INITIAL_SCALE_TONIC_INDEX as usize],
             ),
         },
@@ -64,13 +64,13 @@ impl React<NewScaleTonicSelected> for Console {
     fn react(&mut self, NewScaleTonicSelected(index): NewScaleTonicSelected) {
         if let Some(state) = &mut self.state {
             let tonic = NoteName::CIRCLE_OF_FIFTHS[index];
-            state.scale = Scale::new(tonic);
+            state.scale = MajorScale::new(tonic);
             state.refresh();
         }
     }
 }
 
-fn display_notes(notes: &HtmlDivElement, scale: Scale, all: &Notes) {
+fn display_notes(notes: &HtmlDivElement, scale: MajorScale, all: &Notes) {
     let mut is_first = true;
     for note in all.iter() {
         if !is_first {
@@ -102,7 +102,7 @@ fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
     }
 }
 
-fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: Scale) {
+fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: MajorScale) {
     let Ok(chord) = Chord::try_from(all.clone()) else {
         return;
     };
@@ -139,7 +139,7 @@ fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: Scale) {
 
 struct State {
     held_and_sustained: Notes,
-    scale: Scale,
+    scale: MajorScale,
     notes: HtmlDivElement,
     intervals: HtmlDivElement,
     chord_id: HtmlDivElement,

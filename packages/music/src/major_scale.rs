@@ -2,11 +2,11 @@ use crate::{Degree, NoteName};
 
 #[derive(Clone, Copy)]
 #[cfg_attr(test, derive(Debug))]
-pub struct Scale {
+pub struct MajorScale {
     tonic: NoteName,
 }
 
-impl Scale {
+impl MajorScale {
     pub fn new(tonic: NoteName) -> Self {
         Self { tonic }
     }

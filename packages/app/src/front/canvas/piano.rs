@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 use alloc::{string::ToString, vec};
 
 use js::Integer;
-use music::{Degree, Note, NoteName, Scale, ScaleType};
+use music::{Degree, MajorScale, Note, NoteName, ScaleType};
 use scale_factor::ScaleFactor;
 use web::{DominantBaseline, SVGRectElement, SVGSVGElement, SVGTextElement};
 
@@ -139,7 +139,7 @@ impl Piano {
     }
 
     pub fn set_scale(&self, tonic: NoteName, scale_ty: ScaleType) {
-        let scale = Scale::new(tonic);
+        let scale = MajorScale::new(tonic);
 
         for (note, key) in notes().zip(&self.labeled_keys) {
             let degree = scale.name2degree(note.name());

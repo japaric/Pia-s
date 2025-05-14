@@ -1,4 +1,4 @@
-use crate::{Interval, Scale};
+use crate::{Interval, MajorScale};
 
 #[derive(Clone, Copy, PartialEq)]
 #[cfg_attr(test, derive(Debug, Eq, Ord, PartialOrd))]
@@ -104,7 +104,7 @@ impl NoteName {
         }
     }
 
-    pub fn as_str(&self, scale: Scale) -> &'static str {
+    pub fn as_str(&self, scale: MajorScale) -> &'static str {
         use NoteName::*;
 
         match (scale.tonic(), self) {
@@ -128,7 +128,7 @@ mod tests {
     #[test]
     fn sharp_four() {
         for tonic in NoteName::CIRCLE_OF_FIFTHS {
-            let scale = Scale::new(tonic);
+            let scale = MajorScale::new(tonic);
             let note = scale.degree2name(Degree::SharpFour);
 
             dbg!(scale, note);
@@ -149,7 +149,7 @@ mod tests {
         ];
 
         for (tonic, notes) in cases {
-            let scale = Scale::new(tonic);
+            let scale = MajorScale::new(tonic);
 
             for note in notes {
                 assert!(note.as_str(scale).contains('♯'));

@@ -2,7 +2,7 @@ use core::fmt::{self, Write as _};
 #[cfg(test)]
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Chord, Note, NoteName, Notes, Scale, note_names::NoteNames};
+use crate::{Chord, MajorScale, Note, NoteName, Notes, note_names::NoteNames};
 
 impl Chord {
     pub fn identify_with_tonic(&self, tonic: NoteName) -> Option<ChordId> {
@@ -597,8 +597,8 @@ impl ChordId {
         S(*self)
     }
 
-    pub fn sub(&self, scale: Scale) -> impl fmt::Display {
-        struct S(ChordId, Scale);
+    pub fn sub(&self, scale: MajorScale) -> impl fmt::Display {
+        struct S(ChordId, MajorScale);
 
         impl fmt::Display for S {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
