@@ -107,6 +107,23 @@ impl NoteName {
     pub fn as_str(&self, scale: Scale) -> &'static str {
         use NoteName::*;
 
+        if matches!(scale.ty, ScaleType::HarmonicMinor) {
+            match (self, scale.tonic) {
+                (Gb, G) | (Db, D) | (Ab, A) | (Eb, E) | (Bb, B) => {
+                    return self.as_sharp_str();
+                }
+
+                (B, Eb | Ab) => return "C♭",
+                (E, Ab) => return "F♭",
+                (C, Db) => return "B♯",
+                (F, Gb) => return "E♯",
+
+                (_, Ab) => return self.as_flat_str(),
+
+                _ => {}
+            }
+        }
+
         let offset = match scale.ty {
             ScaleType::Major => 0,
             ScaleType::Dorian => 10,
@@ -115,8 +132,8 @@ impl NoteName {
             ScaleType::Mixolydian => 5,
             ScaleType::Minor | ScaleType::HarmonicMinor => 3,
         };
-        let parallel_tonic = scale.tonic.step(offset);
-        match (parallel_tonic, self) {
+        let relative_tonic = scale.tonic.step(offset);
+        match (relative_tonic, self) {
             (C, Gb)
             | (G, Gb | Db)
             | (D, Gb | Db | Ab)
@@ -177,5 +194,24 @@ mod tests {
         assert_eq!("G♯", stringify(Ab));
         assert_eq!("E♭", stringify(Eb));
         assert_eq!("B♭", stringify(Bb));
+    }
+
+    #[test]
+    fn harmonic_minor_is_fun() {
+        use NoteName::*;
+
+        let stringify = |name: NoteName, tonic: NoteName| name.as_str(Scale::harmonic_minor(tonic));
+
+        assert_eq!("F♯", stringify(Gb, G));
+        assert_eq!("C♯", stringify(Db, D));
+        assert_eq!("G♯", stringify(Ab, A));
+        assert_eq!("D♯", stringify(Eb, E));
+        assert_eq!("A♯", stringify(Bb, B));
+        assert_eq!("C♭", stringify(B, Eb));
+        assert_eq!("F♭", stringify(E, Ab));
+        assert_eq!("B♯", stringify(C, Db));
+        assert_eq!("E♯", stringify(F, Gb));
+
+        assert_eq!("A♭", stringify(Ab, Ab));
     }
 }

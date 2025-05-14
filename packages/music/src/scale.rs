@@ -20,4 +20,11 @@ impl Scale {
             ty: ScaleType::Minor,
         }
     }
+
+    pub fn harmonic_minor(tonic: NoteName) -> Self {
+        Self {
+            tonic,
+            ty: ScaleType::HarmonicMinor,
+        }
+    }
 }
