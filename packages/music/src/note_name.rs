@@ -113,7 +113,7 @@ impl NoteName {
                     return self.as_sharp_str();
                 }
 
-                (B, Eb | Ab) => return "C♭",
+                (B, Ab) => return "C♭",
                 (E, Ab) => return "F♭",
                 (C, Db) => return "B♯",
                 (F, Gb) => return "E♯",
@@ -139,6 +139,8 @@ impl NoteName {
             | (D, Gb | Db | Ab)
             | (A, Gb | Db | Ab | Eb)
             | (E | B, Gb | Db | Ab | Eb | Bb) => self.as_sharp_str(),
+
+            (Gb, B) => "C♭",
 
             _ => self.as_flat_str(),
         }
@@ -184,6 +186,13 @@ mod tests {
     }
 
     #[test]
+    fn b_in_flat_g_major() {
+        use NoteName::*;
+
+        assert_eq!("C♭", B.as_str(Scale::major(Gb)));
+    }
+
+    #[test]
     fn minor_scales() {
         use NoteName::*;
 
@@ -208,6 +217,7 @@ mod tests {
         assert_eq!("D♯", stringify(Eb, E));
         assert_eq!("A♯", stringify(Bb, B));
         assert_eq!("C♭", stringify(B, Eb));
+        assert_eq!("C♭", stringify(B, Ab));
         assert_eq!("F♭", stringify(E, Ab));
         assert_eq!("B♯", stringify(C, Db));
         assert_eq!("E♯", stringify(F, Gb));
