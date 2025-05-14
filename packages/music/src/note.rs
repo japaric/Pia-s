@@ -2,7 +2,7 @@
 
 use core::fmt;
 
-use crate::{Error, MajorScale, NoteName};
+use crate::{Error, NoteName, scale::Scale};
 
 #[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 #[cfg_attr(test, derive(Debug))]
@@ -76,10 +76,10 @@ impl Note {
         self.0
     }
 
-    pub fn display(&self, scale: MajorScale) -> impl fmt::Display {
+    pub fn display(&self, scale: Scale) -> impl fmt::Display {
         struct S {
             note: Note,
-            scale: MajorScale,
+            scale: Scale,
         }
 
         impl fmt::Display for S {

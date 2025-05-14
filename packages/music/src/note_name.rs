@@ -1,4 +1,4 @@
-use crate::{Interval, MajorScale};
+use crate::{Interval, ScaleType, scale::Scale};
 
 #[derive(Clone, Copy, PartialEq)]
 #[cfg_attr(test, derive(Debug, Eq, Ord, PartialOrd))]
@@ -104,10 +104,19 @@ impl NoteName {
         }
     }
 
-    pub fn as_str(&self, scale: MajorScale) -> &'static str {
+    pub fn as_str(&self, scale: Scale) -> &'static str {
         use NoteName::*;
 
-        match (scale.tonic(), self) {
+        let offset = match scale.ty {
+            ScaleType::Major => 0,
+            ScaleType::Dorian => 10,
+            ScaleType::Phrygian => 8,
+            ScaleType::Lydian => 7,
+            ScaleType::Mixolydian => 5,
+            ScaleType::Minor | ScaleType::HarmonicMinor => 3,
+        };
+        let parallel_tonic = scale.tonic.step(offset);
+        match (parallel_tonic, self) {
             (C, Gb)
             | (G, Gb | Db)
             | (D, Gb | Db | Ab)
@@ -121,7 +130,7 @@ impl NoteName {
 
 #[cfg(test)]
 mod tests {
-    use crate::Degree;
+    use crate::{Degree, MajorScale};
 
     use super::*;
 
@@ -132,12 +141,12 @@ mod tests {
             let note = scale.degree2name(Degree::SharpFour);
 
             dbg!(scale, note);
-            assert!(!note.as_str(scale).contains('♭'));
+            assert!(!note.as_str(Scale::major(tonic)).contains('♭'));
         }
     }
 
     #[test]
-    fn sharp_keys() {
+    fn sharp_notes() {
         use NoteName::*;
 
         let cases: [(_, &[_]); 5] = [
@@ -149,11 +158,24 @@ mod tests {
         ];
 
         for (tonic, notes) in cases {
-            let scale = MajorScale::new(tonic);
+            let scale = Scale::major(tonic);
 
             for note in notes {
                 assert!(note.as_str(scale).contains('♯'));
             }
         }
+    }
+
+    #[test]
+    fn minor_scales() {
+        use NoteName::*;
+
+        let stringify = |name: NoteName| name.as_str(Scale::minor(name));
+
+        assert_eq!("F♯", stringify(Gb));
+        assert_eq!("C♯", stringify(Db));
+        assert_eq!("G♯", stringify(Ab));
+        assert_eq!("E♭", stringify(Eb));
+        assert_eq!("B♭", stringify(Bb));
     }
 }

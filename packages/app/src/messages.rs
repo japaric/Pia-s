@@ -10,7 +10,7 @@ pub struct ActiveNotesChanged {
 #[derive(Clone, Message)]
 pub struct NewScaleTonicSelected(pub usize);
 
-#[derive(Message)]
+#[derive(Clone, Message)]
 pub struct NewScaleTypeSelected(pub usize);
 
 #[derive(Message)]

@@ -1,12 +1,12 @@
 use alloc::format;
 use alloc::string::ToString;
-use music::{Chord, Interval, MajorScale, NoteName, NoteNames, Notes};
+use music::{Chord, Interval, NoteName, NoteNames, Notes, Scale, ScaleType};
 use spur::{Message, Publish as _, React};
 use web::{HtmlDivElement, Node};
 
 use crate::broker::Broker;
 use crate::class::Class;
-use crate::messages::{ActiveNotesChanged, NewScaleTonicSelected};
+use crate::messages::{ActiveNotesChanged, NewScaleTonicSelected, NewScaleTypeSelected};
 use crate::{consts, html};
 
 pub(super) fn initialize(parent: &Node) {
@@ -21,7 +21,7 @@ pub(super) fn initialize(parent: &Node) {
             intervals,
             notes,
             chord_id,
-            scale: MajorScale::new(
+            scale: Scale::major(
                 NoteName::CIRCLE_OF_FIFTHS[consts::INITIAL_SCALE_TONIC_INDEX as usize],
             ),
         },
@@ -64,13 +64,23 @@ impl React<NewScaleTonicSelected> for Console {
     fn react(&mut self, NewScaleTonicSelected(index): NewScaleTonicSelected) {
         if let Some(state) = &mut self.state {
             let tonic = NoteName::CIRCLE_OF_FIFTHS[index];
-            state.scale = MajorScale::new(tonic);
+            state.scale.tonic = tonic;
             state.refresh();
         }
     }
 }
 
-fn display_notes(notes: &HtmlDivElement, scale: MajorScale, all: &Notes) {
+impl React<NewScaleTypeSelected> for Console {
+    fn react(&mut self, NewScaleTypeSelected(index): NewScaleTypeSelected) {
+        if let Some(state) = &mut self.state {
+            let ty = ScaleType::ALL[index];
+            state.scale.ty = ty;
+            state.refresh();
+        }
+    }
+}
+
+fn display_notes(notes: &HtmlDivElement, scale: Scale, all: &Notes) {
     let mut is_first = true;
     for note in all.iter() {
         if !is_first {
@@ -102,7 +112,7 @@ fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
     }
 }
 
-fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: MajorScale) {
+fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: Scale) {
     let Ok(chord) = Chord::try_from(all.clone()) else {
         return;
     };
@@ -139,7 +149,7 @@ fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: MajorScale) {
 
 struct State {
     held_and_sustained: Notes,
-    scale: MajorScale,
+    scale: Scale,
     notes: HtmlDivElement,
     intervals: HtmlDivElement,
     chord_id: HtmlDivElement,
