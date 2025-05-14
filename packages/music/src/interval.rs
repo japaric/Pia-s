@@ -15,6 +15,18 @@ pub enum Interval {
     m7,
     M7,
     P8,
+    m9,
+    M9,
+    m10,
+    M10,
+    P11,
+    A11,
+    P12,
+    m13,
+    M13,
+    m14,
+    M14,
+    P15,
 }
 
 impl Interval {
@@ -25,7 +37,9 @@ impl Interval {
             return P0;
         }
 
-        value %= 12;
+        if value > 24 {
+            value %= 12;
+        }
 
         match value {
             0 => P8,
@@ -39,7 +53,21 @@ impl Interval {
             8 => m6,
             9 => M6,
             10 => m7,
-            _ => M7,
+            11 => M7,
+            12 => P8,
+            13 => m9,
+            14 => M9,
+            15 => m10,
+            16 => M10,
+            17 => P11,
+            18 => A11,
+            19 => P12,
+            20 => m13,
+            21 => M13,
+            22 => m14,
+            23 => M14,
+            24 => P15,
+            _ => unreachable!(),
         }
     }
 
@@ -64,6 +92,18 @@ impl Interval {
             m7 => "m7",
             M7 => "M7",
             P8 => "P8",
+            m9 => "m9",
+            M9 => "M9",
+            m10 => "m10",
+            M10 => "M10",
+            P11 => "P11",
+            A11 => "A11",
+            P12 => "P12",
+            m13 => "m13",
+            M13 => "M13",
+            m14 => "m14",
+            M14 => "M14",
+            P15 => "P15",
         }
     }
 }
@@ -80,9 +120,9 @@ mod tests {
         assert_eq!(P0, Interval::from_u8_lossy(0));
 
         assert_eq!(m2, Interval::from_u8_lossy(1));
-        assert_eq!(m2, Interval::from_u8_lossy(13));
+        assert_eq!(m9, Interval::from_u8_lossy(13));
 
         assert_eq!(M7, Interval::from_u8_lossy(11));
-        assert_eq!(M7, Interval::from_u8_lossy(23));
+        assert_eq!(M14, Interval::from_u8_lossy(23));
     }
 }
