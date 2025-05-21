@@ -17,6 +17,7 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 - Identifies common chords and their extensions.
 - Pressed / held keys are colored according to their relationship to the tonic center, i.e. each scale degree has its own color.
 - Highlights the overtones of the pressed note.
+- Highlights intervals played below an "low interval limit"
 
 **NOTE** `Pia's` does not produce audio nor MIDI output. Do not expect sound to come from it..
 
@@ -76,6 +77,20 @@ Consider the following table which lists the overtones of the A2 note (assuming 
 These intervals will hold regardless of the note pressed.
 
 ![A musical keyboard where the pressed note C4 is highlighted in red and its overtones C5, G5, etc. are also highlighted but to a lesser extend](./images/overtones.png)
+
+## Low Interval Limit
+
+The low interval limit is the lowest recommended pitch at which an interval should be played.
+Playing the interval below this limit makes the interval sound "muddy" or unclear.
+When `Pia's` identifies an interval that lies is below its low interval limit, it'll highlight it in yellow.
+
+For example, in the root position version of a A minor chord build on note `A2`, the minor third interval is below the low interval limit of `C3`. 
+
+![The A minor chord in root position build on note A2 has a minor third interval below its low interval limit](./images/below-low-interval-limit.png)
+
+Inverting the chord by moving the `A` note one octave solves the issue: the lowest interval, now a major third on note `C3`, sits above its low interval limit of `Bb2`.
+
+![The A minor chord in first inversion build on note C3 has all its intervals above their low interval limit](./images/above-low-interval-limit.png)
 
 ## Build dependencies
 

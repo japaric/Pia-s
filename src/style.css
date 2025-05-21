@@ -169,3 +169,7 @@ select {
 .\34 /* = 4 */ {
     fill: #f9b7c5;
 }
+
+.lil-warning {
+    color: #f4bf75;
+}

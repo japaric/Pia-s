@@ -1,6 +1,6 @@
 use alloc::format;
 use alloc::string::ToString;
-use music::{Chord, Interval, NoteName, NoteNames, Notes, Scale, ScaleType};
+use music::{Chord, Interval, Note, NoteName, NoteNames, Notes, Scale, ScaleType};
 use spur::{Message, Publish as _, React};
 use web::{HtmlDivElement, Node};
 
@@ -97,6 +97,7 @@ fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
     let mut notes = all.iter();
     let mut last = notes.next().unwrap();
     let mut is_first = true;
+    let lil_warning = js::String::from(Class::LilWarning.as_str());
     for note in notes {
         let half_steps = last.distance_to(note);
         let interval = Interval::from_u8_lossy(half_steps.unsigned_abs());
@@ -105,10 +106,41 @@ fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
             html::span(intervals, " ");
         }
 
-        html::span(intervals, interval.as_str());
+        let span = html::span(intervals, interval.as_str());
+        if below_low_interval_limit(last, interval) {
+            span.add_class(&lil_warning);
+        }
 
         last = note;
         is_first = false;
+    }
+}
+
+fn below_low_interval_limit(lower: Note, interval: Interval) -> bool {
+    use Interval::*;
+
+    match interval {
+        // unlimited
+        P0 | P8 | P15 => false,
+
+        m2 => lower < Note::E3,
+        M2 => lower < Note::Eb3,
+        m3 => lower < Note::C3,
+        M3 => lower < Note::Bb2,
+        P4 => lower < Note::Bb2,
+        TT => lower < Note::Bb2,
+        P5 => lower < Note::Bb1,
+        m6 => lower < Note::G2,
+        M6 => lower < Note::F2,
+        m7 => lower < Note::F2,
+        M7 => lower < Note::F2,
+        m9 => lower < Note::E2,
+        M9 => lower < Note::Eb2,
+        m10 => lower < Note::C2,
+        M10 => lower < Note::Bb1,
+
+        // no data
+        P11 | A11 | P12 | m13 | M13 | m14 | M14 => false,
     }
 }
 

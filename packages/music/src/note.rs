@@ -12,6 +12,18 @@ pub struct Note(u8);
 impl Note {
     pub const A0: Self = Note(21);
 
+    pub const Bb1: Self = Note(34);
+
+    pub const C2: Self = Note(36);
+    pub const Eb2: Self = Note(39);
+    pub const E2: Self = Note(40);
+    pub const F2: Self = Note(41);
+    pub const G2: Self = Note(43);
+    pub const Bb2: Self = Note(46);
+
+    pub const C3: Self = Note(48);
+    pub const Eb3: Self = Note(51);
+    pub const E3: Self = Note(52);
     pub const G3: Self = Note(55);
 
     pub const C4: Self = Note(60);
