@@ -88,7 +88,7 @@ For example, in the root position version of a A minor chord build on note `A2`,
 
 ![The A minor chord in root position build on note A2 has a minor third interval below its low interval limit](./images/below-low-interval-limit.png)
 
-Inverting the chord by moving the `A` note one octave solves the issue: the lowest interval, now a major third on note `C3`, sits above its low interval limit of `Bb2`.
+Inverting the chord by moving the note `A` up one octave solves the issue: the lowest interval, now a major third on note `C3`, sits above its low interval limit of `Bb2`.
 
 ![The A minor chord in first inversion build on note C3 has all its intervals above their low interval limit](./images/above-low-interval-limit.png)
 
