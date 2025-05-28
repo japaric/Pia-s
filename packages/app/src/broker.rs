@@ -3,6 +3,7 @@ use crate::front::canvas::Canvas;
 use crate::front::console::Console;
 use crate::front::settings::midi_input::device::MidiInputDeviceSelect;
 use crate::front::settings::scale::ScaleTonicSelect;
+use crate::front::tonnetz::Tonnetz;
 
 #[spur::subscriptions]
 const _: Broker = {
@@ -26,6 +27,11 @@ const _: Broker = {
     #[subscribed(to = crate::messages::NewScaleTypeSelected)]
     #[subscribed(to = crate::messages::ActiveNotesChanged)]
     const _: Console = Console::new();
+
+    #[subscribed(to = crate::front::tonnetz::Initialize)]
+    #[subscribed(to = crate::messages::NewScaleTonicSelected)]
+    #[subscribed(to = crate::messages::ActiveNotesChanged)]
+    const _: Tonnetz = Tonnetz::new();
 
     /* back */
     #[subscribed(to = crate::messages::NoteOff)]

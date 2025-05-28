@@ -3,6 +3,7 @@ pub enum Class {
     ColumnContainer,
     Console,
     Degree,
+    Highlight,
     HvCenter,
     LilWarning,
     Octave,
@@ -16,6 +17,9 @@ pub enum Class {
     Pressed,
     RowContainer,
     Sustained,
+    Tonnetz,
+    TonnetzCircle,
+    TonnetzLabel,
 }
 
 // TODO compress `style.css` to not use these long names
@@ -27,6 +31,7 @@ impl Class {
             ColumnContainer => "column-container",
             Console => "console",
             Degree => "degree",
+            Highlight => "highlight",
             HvCenter => "hv-center",
             LilWarning => "lil-warning",
             Octave => "octave",
@@ -40,6 +45,9 @@ impl Class {
             Pressed => "pressed",
             RowContainer => "row-container",
             Sustained => "sustained",
+            Tonnetz => "tonnetz",
+            TonnetzCircle => "tonnetz-circle",
+            TonnetzLabel => "tonnetz-label",
         }
     }
 }

@@ -1,6 +1,6 @@
 use crate::ScaleType;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 pub enum Degree {
     One,
     FlatTwo,

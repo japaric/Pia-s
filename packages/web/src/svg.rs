@@ -56,6 +56,30 @@ impl SVGRectElement {
     }
 }
 
+js::inheritance!(SVGEllipseElement: SVGGeometryElement);
+
+impl SVGEllipseElement {
+    pub fn set_cx(&self, cx: &js::Value) {
+        self.set_attribute(&"cx".into(), cx);
+    }
+
+    pub fn set_cy(&self, cy: &js::Value) {
+        self.set_attribute(&"cy".into(), cy);
+    }
+
+    pub fn set_rx(&self, rx: &js::Value) {
+        self.set_attribute(&"rx".into(), rx);
+    }
+
+    pub fn set_ry(&self, ry: &js::Value) {
+        self.set_attribute(&"ry".into(), ry);
+    }
+}
+
+unsafe impl IsElementSvg for SVGEllipseElement {
+    const TAG_NAME: &'static str = "ellipse";
+}
+
 js::inheritance!(SVGTextContentElement: SVGGraphicsElement);
 
 js::inheritance!(SVGTextPositioningElement: SVGTextContentElement);
@@ -92,6 +116,7 @@ impl SVGTextElement {
 
 #[derive(Clone, Copy)]
 pub enum DominantBaseline {
+    Central,
     Middle,
     TextTop,
 }
@@ -101,6 +126,7 @@ impl DominantBaseline {
         use DominantBaseline::*;
 
         match self {
+            Central => "central",
             Middle => "middle",
             TextTop => "text-top",
         }

@@ -43,6 +43,42 @@ select {
     flex-direction: column;
 }
 
+.tonnetz {
+    height: 200px;
+}
+
+.tonnetz-circle {
+    stroke-width: 4;
+    paint-order: stroke;
+    stroke: #c5c8c6;
+    fill: #1d1f21;
+}
+
+.tonnetz-circle.highlight {
+    stroke: #c5c8c6;
+}
+
+.tonnetz-circle:not(.highlight) {
+    stroke: #808080;
+}
+
+.tonnetz-label {
+    font-size: 20px;
+}
+
+.tonnetz-label.highlight {
+    fill: #c5c8c6;
+}
+
+.tonnetz-label:not(.highlight) {
+    fill: #808080;
+}
+
+svg {
+    display: block;
+    margin: auto;
+}
+
 .piano {
     height: 150px;
 }

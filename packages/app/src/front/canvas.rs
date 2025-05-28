@@ -12,7 +12,7 @@ use crate::{consts, svg};
 mod piano;
 
 pub(super) fn initialize(parent: &Node) {
-    let piano = Piano::new(&svg::svg(parent, Class::Piano));
+    let piano = Piano::new(&svg::svg(parent, Class::Piano, true));
 
     Broker::publish(Initialize { piano })
 }
