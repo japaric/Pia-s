@@ -6,6 +6,7 @@ mod macros;
 mod chord;
 pub mod chord_id;
 mod degree;
+mod degrees;
 mod interval;
 mod major_scale;
 mod note;
@@ -17,6 +18,7 @@ mod scale_type;
 
 pub use chord::Chord;
 pub use degree::Degree;
+pub use degrees::Degrees;
 pub use interval::Interval;
 pub use major_scale::MajorScale;
 pub use note::Note;

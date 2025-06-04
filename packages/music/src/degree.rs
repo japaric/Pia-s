@@ -1,6 +1,7 @@
 use crate::ScaleType;
 
 #[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(test, derive(Debug))]
 pub enum Degree {
     One,
     FlatTwo,
@@ -142,5 +143,33 @@ impl Degree {
 
     pub fn belongs_to(&self, scale: ScaleType) -> bool {
         scale.degrees().contains(self)
+    }
+
+    pub fn step(&self, half_steps: isize) -> Self {
+        let prev_index = *self as isize;
+        let mut new_index = (prev_index + (half_steps % 12)) % 12;
+        if new_index < 0 {
+            new_index += 12;
+        }
+        Self::from_u8_lossy(new_index as u8)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn step() {
+        use Degree::*;
+
+        assert_eq!(Five, One.step(7));
+        assert_eq!(Four, One.step(-7));
+
+        assert_eq!(FlatThree, One.step(3));
+        assert_eq!(Three, One.step(4));
+
+        assert_eq!(Six, One.step(-3));
+        assert_eq!(FlatSix, One.step(-4));
     }
 }
