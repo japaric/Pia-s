@@ -1,3 +1,4 @@
+use alloc::collections::btree_map::BTreeMap;
 use alloc::format;
 use alloc::string::ToString;
 use music::{Chord, Interval, Note, NoteName, NoteNames, Notes, Scale, ScaleType};
@@ -6,7 +7,9 @@ use web::{HtmlDivElement, Node};
 
 use crate::broker::Broker;
 use crate::class::Class;
-use crate::messages::{ActiveNotesChanged, NewScaleTonicSelected, NewScaleTypeSelected};
+use crate::messages::{
+    ActiveHarmonyChanged, ActiveNotesChanged, NewScaleTonicSelected, NewScaleTypeSelected,
+};
 use crate::{consts, html};
 
 pub(super) fn initialize(parent: &Node) {
@@ -155,8 +158,11 @@ fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: Scale) {
     }
 
     let mut is_first = true;
+    let mut tonics = BTreeMap::new();
     for tonic in note_names {
         if let Some(id) = chord.identify_with_tonic(tonic) {
+            tonics.insert(tonic, id.kind.is_minor());
+
             if !is_first {
                 html::span(chord_id, " or ");
             }
@@ -168,6 +174,8 @@ fn display_chord_id(chord_id: &HtmlDivElement, all: &Notes, scale: Scale) {
             is_first = false;
         }
     }
+
+    Broker::publish(ActiveHarmonyChanged { tonics });
 
     let found_no_id = is_first;
     if found_no_id {
@@ -202,6 +210,10 @@ impl State {
         chord_id.replace_children0();
 
         if held_and_sustained.len() < 2 {
+            Broker::publish(ActiveHarmonyChanged {
+                tonics: BTreeMap::new(),
+            });
+
             return;
         }
 

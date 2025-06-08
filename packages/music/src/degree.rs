@@ -141,6 +141,44 @@ impl Degree {
         }
     }
 
+    pub fn roman_major(&self) -> &'static str {
+        use Degree::*;
+
+        match self {
+            One => "Ⅰ",
+            FlatTwo => "♭Ⅱ",
+            Two => "Ⅱ",
+            FlatThree => "♭Ⅲ",
+            Three => "Ⅲ",
+            Four => "Ⅳ",
+            SharpFour => "♯Ⅳ",
+            Five => "Ⅴ",
+            FlatSix => "♭Ⅵ",
+            Six => "Ⅵ",
+            FlatSeven => "♭Ⅶ",
+            Seven => "Ⅶ",
+        }
+    }
+
+    pub fn roman_minor(&self) -> &'static str {
+        use Degree::*;
+
+        match self {
+            One => "ⅰ",
+            FlatTwo => "♭ⅱ",
+            Two => "ⅱ",
+            FlatThree => "♭ⅲ",
+            Three => "ⅲ",
+            Four => "ⅳ",
+            SharpFour => "♯ⅳ",
+            Five => "ⅴ",
+            FlatSix => "♭ⅵ",
+            Six => "ⅵ",
+            FlatSeven => "♭ⅶ",
+            Seven => "ⅶ",
+        }
+    }
+
     pub fn belongs_to(&self, scale: ScaleType) -> bool {
         scale.degrees().contains(self)
     }

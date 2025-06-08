@@ -6,13 +6,10 @@ use music::{Degree, Degrees, MajorScale, NoteName, NoteNames, ScaleType};
 use spur::{Message, Publish as _, React};
 use web::{Node, SVGEllipseElement, SVGSVGElement, SVGTextElement};
 
-use crate::{
-    broker::Broker,
-    class::Class,
-    consts,
-    messages::{ActiveNotesChanged, NewScaleTonicSelected, NewScaleTypeSelected},
-    svg,
-};
+use crate::broker::Broker;
+use crate::class::Class;
+use crate::messages::{ActiveNotesChanged, NewScaleTonicSelected, NewScaleTypeSelected};
+use crate::{consts, svg};
 
 pub fn initialize(parent: &Node) {
     let canvas = Canvas::new(&svg::svg(parent, Class::Tonnetz, false));

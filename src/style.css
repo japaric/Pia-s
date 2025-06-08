@@ -45,13 +45,14 @@ select {
 
 .tonnetz {
     height: 300px;
+    width: 50%;
 }
 
 .tonnetz-circle {
-    stroke-width: 4;
+    stroke-width: 2;
     paint-order: stroke;
     stroke: #c5c8c6;
-    fill: #1d1f21;
+    fill: none;
 }
 
 .tonnetz-circle.highlight {
@@ -76,6 +77,38 @@ select {
 
 .tonnetz-label:not(.highlight) {
     fill: #808080;
+}
+
+.cof-path {
+    stroke-width: 2;
+    paint-order: stroke;
+    stroke: #c5c8c6;
+    fill: none;
+    shape-rendering: crispEdges;
+}
+
+.cof-path:not(.highlight) {
+    stroke: #808080;
+}
+
+.cof-path:not(.in-scale) {
+    display: none;
+}
+
+.cof-label {
+    font-size: 20px;
+}
+
+.cof-label.highlight {
+    fill: #c5c8c6;
+}
+
+.cof-label:not(.highlight) {
+    fill: #808080;
+}
+
+.cof-label:not(.in-scale):not(.highlight) {
+    display: none;
 }
 
 svg {

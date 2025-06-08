@@ -76,6 +76,18 @@ impl SVGEllipseElement {
     }
 }
 
+js::inheritance!(SVGPathElement: SVGGeometryElement);
+
+impl SVGPathElement {
+    pub fn set_d(&self, d: &js::String) {
+        self.set_attribute(&"d".into(), d);
+    }
+}
+
+unsafe impl IsElementSvg for SVGPathElement {
+    const TAG_NAME: &'static str = "path";
+}
+
 unsafe impl IsElementSvg for SVGEllipseElement {
     const TAG_NAME: &'static str = "ellipse";
 }

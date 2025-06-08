@@ -679,6 +679,20 @@ impl ChordKind {
         Self::Seventh(Alteration::None),
         Self::DiminishedSeventh,
     ];
+
+    pub fn is_minor(&self) -> bool {
+        use ChordKind::*;
+
+        matches!(
+            self,
+            Minor
+                | Diminished
+                | MinorSixth
+                | MinorMajorSeventh(_)
+                | MinorSeventh(_)
+                | DiminishedSeventh,
+        )
+    }
 }
 
 #[derive(Clone, Copy, PartialEq)]

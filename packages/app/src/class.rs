@@ -1,5 +1,7 @@
 #[derive(Clone, Copy)]
 pub enum Class {
+    CofPath,
+    CofLabel,
     ColumnContainer,
     Console,
     Degree,
@@ -29,6 +31,8 @@ impl Class {
         use Class::*;
 
         match self {
+            CofPath => "cof-path",
+            CofLabel => "cof-label",
             ColumnContainer => "column-container",
             Console => "console",
             Degree => "degree",

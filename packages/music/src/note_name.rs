@@ -1,7 +1,7 @@
 use crate::{Interval, ScaleType, scale::Scale};
 
-#[derive(Clone, Copy, PartialEq)]
-#[cfg_attr(test, derive(Debug, Eq, Ord, PartialOrd))]
+#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(test, derive(Debug))]
 pub enum NoteName {
     C,
     Db,

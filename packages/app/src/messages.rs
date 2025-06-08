@@ -1,10 +1,16 @@
-use music::{Note, Notes};
+use alloc::collections::btree_map::BTreeMap;
+use music::{Note, NoteName, Notes};
 use spur::Message;
 
 #[derive(Clone, Message)]
 pub struct ActiveNotesChanged {
     pub held: Notes,
     pub sustained: Notes,
+}
+
+#[derive(Clone, Message)]
+pub struct ActiveHarmonyChanged {
+    pub tonics: BTreeMap<NoteName, /* is_minor */ bool>,
 }
 
 #[derive(Clone, Message)]

@@ -1,5 +1,6 @@
 use crate::back::chord_namer::NoteGrouper;
 use crate::front::canvas::Canvas;
+use crate::front::cof::CircleOfFifths;
 use crate::front::console::Console;
 use crate::front::settings::midi_input::device::MidiInputDeviceSelect;
 use crate::front::settings::scale::ScaleTonicSelect;
@@ -33,6 +34,12 @@ const _: Broker = {
     #[subscribed(to = crate::messages::NewScaleTypeSelected)]
     #[subscribed(to = crate::messages::ActiveNotesChanged)]
     const _: Tonnetz = Tonnetz::new();
+
+    #[subscribed(to = crate::front::cof::Initialize)]
+    #[subscribed(to = crate::messages::ActiveHarmonyChanged)]
+    #[subscribed(to = crate::messages::NewScaleTonicSelected)]
+    #[subscribed(to = crate::messages::NewScaleTypeSelected)]
+    const _: CircleOfFifths = CircleOfFifths::new();
 
     /* back */
     #[subscribed(to = crate::messages::NoteOff)]

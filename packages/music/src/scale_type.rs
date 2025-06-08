@@ -49,4 +49,21 @@ impl ScaleType {
             HarmonicMinor => &Degree::HARMONIC_MINOR,
         }
     }
+
+    pub fn contains(&self, chord_tonic: Degree, is_minor_chord: bool) -> bool {
+        use Degree::*;
+        use ScaleType::*;
+
+        matches!(
+            (self, chord_tonic, is_minor_chord),
+            (Major, One | Four | Five, false)
+                | (Major, Two | Three | Six | Seven, true)
+                | (Dorian, FlatThree | Five | FlatSeven, false)
+                | (Phrygian, FlatTwo | FlatThree | FlatSix, false)
+                | (Lydian, One | Two | Five, false)
+                | (Mixolydian, One | Four | FlatSeven, false)
+                | (Minor, FlatThree | FlatSix | FlatSeven, false)
+                | (HarmonicMinor, FlatThree | Five, false)
+        )
+    }
 }
