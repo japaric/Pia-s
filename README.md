@@ -92,6 +92,20 @@ Inverting the chord by moving the note `A` up one octave solves the issue: the l
 
 ![The A minor chord in first inversion build on note C3 has all its intervals above their low interval limit](./images/above-low-interval-limit.png)
 
+## Tonnetz
+
+A Tonnetz, or "tone network", is a grid arrangement of notes where the interval between two horizontally adjacent notes is a perfect fifth and the interval between two diagonally adjacent notes is a third, which can be either minor or major depending of the direction.
+
+`Pia's` show a Tonnetz with a spread of 4 nodes from the tonic center of the scale.
+To distinguish between major, minor and other modes, the notes outside the scale are not circled.
+
+Upon playing a chord, `Pia's` will highlight the pressed notes in the Tonnetz with a change of brightness.
+As notes repeat in the Tonnetz, `Pia's` will only highlight the notes closest to the tonal center while also picking the notes that are closest to each other forming a cluster.
+
+A Tonnetz helps visually chord qualities as each chord type has a different geometric shape: major and minor triads are triangles; suspended triads are horizontal lines; etc.
+
+![Tonnetz in major scale mode where the notes belonging to a major triad are highlighted](./images/tonnetz-major-scale.png)
+
 ## Build dependencies
 
 See [`shell.nix`](./shell.nix).
