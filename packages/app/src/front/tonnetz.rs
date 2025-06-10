@@ -2,7 +2,7 @@ use alloc::collections::btree_map::BTreeMap;
 use alloc::vec::Vec;
 
 use js::Float;
-use music::{Degree, Degrees, MajorScale, NoteName, NoteNames};
+use music::{Degree, Degrees, MajorScale, NoteName, NoteNames, ScaleType};
 use spur::{Message, Publish as _, React};
 use web::{Node, SVGEllipseElement, SVGSVGElement, SVGTextElement};
 
@@ -10,14 +10,14 @@ use crate::{
     broker::Broker,
     class::Class,
     consts,
-    messages::{ActiveNotesChanged, NewScaleTonicSelected},
+    messages::{ActiveNotesChanged, NewScaleTonicSelected, NewScaleTypeSelected},
     svg,
 };
 
 pub fn initialize(parent: &Node) {
     let canvas = Canvas::new(&svg::svg(parent, Class::Tonnetz, false));
 
-    Broker::publish(Initialize { tonnetz: canvas });
+    Broker::publish(Initialize { canvas });
 }
 
 pub struct Tonnetz {
@@ -32,14 +32,16 @@ impl Tonnetz {
 
 #[derive(Message)]
 pub struct Initialize {
-    tonnetz: Canvas,
+    canvas: Canvas,
 }
 
 impl React<Initialize> for Tonnetz {
-    fn react(&mut self, Initialize { tonnetz }: Initialize) {
+    fn react(&mut self, Initialize { canvas }: Initialize) {
         let tonic = NoteName::CIRCLE_OF_FIFTHS[consts::INITIAL_SCALE_TONIC_INDEX as usize];
+        let scale_type = ScaleType::ALL[consts::INITIAL_SCALE_TYPE_INDEX as usize];
+        canvas.set_scale_type(scale_type);
         self.state = Some(State {
-            canvas: tonnetz,
+            canvas,
             live: NoteNames::empty(),
             scale: MajorScale::new(tonic),
         })
@@ -63,6 +65,17 @@ impl React<NewScaleTonicSelected> for Tonnetz {
 
             state.canvas.highlight(degrees);
         }
+    }
+}
+
+impl React<NewScaleTypeSelected> for Tonnetz {
+    fn react(&mut self, NewScaleTypeSelected(index): NewScaleTypeSelected) {
+        let Some(state) = &mut self.state else { return };
+
+        let new_scale_type = ScaleType::ALL[index];
+
+        state.canvas.reset_in_key();
+        state.canvas.set_scale_type(new_scale_type);
     }
 }
 
@@ -190,40 +203,69 @@ impl Canvas {
 
         let mut centers = Vec::with_capacity(degrees.len());
         while !degrees.is_empty() {
-            let mut closest: Option<(f64, _, _)> = None;
-            for degree in degrees.clone() {
-                for item in self.items[&degree].iter() {
-                    let distance = if centers.is_empty() {
-                        item.cx * item.cx + item.cy * item.cy
-                    } else {
-                        centers
-                            .iter()
-                            .map(|(cx, cy)| {
-                                let dx = cx - item.cx;
-                                let dy = cy - item.cy;
+            let (degree, item) = self.closest(degrees.clone(), &centers);
 
-                                dx * dx + dy * dy
-                            })
-                            .min_by(|a, b| a.partial_cmp(b).unwrap())
-                            .unwrap()
-                    };
-
-                    if let Some(current) = &mut closest {
-                        if distance < current.0 {
-                            *current = (distance, degree, item.clone());
-                        }
-                    } else {
-                        closest = Some((distance, degree, item.clone()));
-                    }
-                }
-            }
-
-            let (_, degree, item) = closest.unwrap();
             item.circle.add_class(&class);
             item.label.add_class(&class);
             centers.push((item.cx, item.cy));
 
             degrees.remove(degree);
+        }
+    }
+
+    fn closest(&self, degrees: Degrees, centers: &[(f64, f64)]) -> (Degree, Item) {
+        let mut closest: Option<(f64, f64, _, _)> = None;
+        for degree in degrees.clone() {
+            for item in self.items[&degree].iter() {
+                let distances = if centers.is_empty() {
+                    item.cx * item.cx + item.cy * item.cy
+                } else {
+                    centers
+                        .iter()
+                        .map(|(cx, cy)| {
+                            let dx = cx - item.cx;
+                            let dy = cy - item.cy;
+
+                            dx * dx + dy * dy
+                        })
+                        .min_by(|a, b| a.partial_cmp(b).unwrap())
+                        .unwrap()
+                };
+
+                let distance_to_item = distances;
+                let distance_to_center = item.cx * item.cx + item.cy * item.cy;
+                if let Some(current) = &mut closest {
+                    if distance_to_item < current.0
+                        || distance_to_item == current.0 && distance_to_center < current.1
+                    {
+                        *current = (distance_to_item, distance_to_center, degree, item.clone());
+                    }
+                } else {
+                    closest = Some((distance_to_item, distance_to_center, degree, item.clone()));
+                }
+            }
+        }
+
+        let (_, _, degree, item) = closest.unwrap();
+
+        (degree, item)
+    }
+
+    fn set_scale_type(&self, scale_type: ScaleType) {
+        let class = Class::InScale.as_str().into();
+        for degree in scale_type.degrees() {
+            for item in &self.items[degree] {
+                item.circle.add_class(&class);
+            }
+        }
+    }
+
+    fn reset_in_key(&self) {
+        let class = Class::InScale.as_str().into();
+        for items in self.items.values() {
+            for item in items {
+                item.circle.rm_class(&class);
+            }
         }
     }
 }

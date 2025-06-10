@@ -30,6 +30,7 @@ const _: Broker = {
 
     #[subscribed(to = crate::front::tonnetz::Initialize)]
     #[subscribed(to = crate::messages::NewScaleTonicSelected)]
+    #[subscribed(to = crate::messages::NewScaleTypeSelected)]
     #[subscribed(to = crate::messages::ActiveNotesChanged)]
     const _: Tonnetz = Tonnetz::new();
 

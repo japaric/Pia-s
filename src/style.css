@@ -62,6 +62,10 @@ select {
     stroke: #808080;
 }
 
+.tonnetz-circle:not(.in-scale) {
+    display: none;
+}
+
 .tonnetz-label {
     font-size: 20px;
 }
