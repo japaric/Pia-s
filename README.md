@@ -18,6 +18,8 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 - Pressed / held keys are colored according to their relationship to the tonic center, i.e. each scale degree has its own color.
 - Highlights the overtones of the pressed note.
 - Highlights intervals played below an "low interval limit"
+- Visualization of chord quality in the form of a Tonnetz
+- Roman numeral analysis in the form of a circle of fifths
 
 **NOTE** `Pia's` does not produce audio nor MIDI output. Do not expect sound to come from it..
 
@@ -105,6 +107,20 @@ As notes repeat in the Tonnetz, `Pia's` will only highlight the notes closest to
 A Tonnetz helps visually chord qualities as each chord type has a different geometric shape: major and minor triads are triangles; suspended triads are horizontal lines; etc.
 
 ![Tonnetz in major scale mode where the notes belonging to a major triad are highlighted](./images/tonnetz-major-scale.png)
+
+## Roman numeral analysis
+
+In roman numeral analysis, the (tertiary) chords build on each of the major scale notes are given a roman number from `I` to `VII`. 
+Major chords are distinguished from minor chords using casing: major chords are uppercase, e.g. `IV`, whereas minor chords are lowercase, e.g. `iv`.
+For non-major scales, roman numbers are modified using a flat or sharp like one would do with scale degrees.
+
+`Pia's` displays both major and minor chords using roman numerals arranged in a circle of fifths.
+This lets one visualize chord progressions that move by descending perfect fifths, which are common in jazz.
+
+Chords are arranged in two concentric circle of fifths with major chords in the outer one and minor chords in the inner one.
+This arrangement lets one visualize the use of chords borrowed from a parallel key in progressions that use modal interchange.
+
+![ii-V-I chord progression visualized in a circle of fifths](./images/cof-2-5-1.png)
 
 ## Build dependencies
 
