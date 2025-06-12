@@ -120,7 +120,7 @@ This lets one visualize chord progressions that move by descending perfect fifth
 Chords are arranged in two concentric circle of fifths with major chords in the outer one and minor chords in the inner one.
 This arrangement lets one visualize the use of chords borrowed from a parallel key in progressions that use modal interchange.
 
-![ii-V-I chord progression visualized in a circle of fifths](./images/cof-2-5-1.png)
+![ii-V-I chord progression visualized in a circle of fifths](./images/cof-2-5-1.gif)
 
 ## Build dependencies
 
