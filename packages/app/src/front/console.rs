@@ -110,7 +110,7 @@ fn display_intervals(intervals: &HtmlDivElement, all: &Notes) {
         }
 
         let span = html::span(intervals, interval.as_str());
-        if below_low_interval_limit(last, interval) {
+        if half_steps < 24 && below_low_interval_limit(last, interval) {
             span.add_class(&lil_warning);
         }
 
