@@ -117,10 +117,12 @@ For non-major scales, roman numbers are modified using a flat or sharp like one 
 `Pia's` displays both major and minor chords using roman numerals arranged in a circle of fifths.
 This lets one visualize chord progressions that move by descending perfect fifths, which are common in jazz.
 
+![ii-V-I chord progression visualized in a circle of fifths](./images/cof-2-5-1.gif)
+
 Chords are arranged in two concentric circle of fifths with major chords in the outer one and minor chords in the inner one.
 This arrangement lets one visualize the use of chords borrowed from a parallel key in progressions that use modal interchange.
 
-![ii-V-I chord progression visualized in a circle of fifths](./images/cof-2-5-1.gif)
+![iv-IV-I chord progression visualized in a circle of fifths](./images/cof-modal-interchange.gif)
 
 ## Build dependencies
 
