@@ -94,6 +94,7 @@ impl React<ActiveNotesChanged> for Canvas {
         ActiveNotesChanged {
             held: current_held,
             sustained: current_sustained,
+            ..
         }: ActiveNotesChanged,
     ) {
         let Some(State {

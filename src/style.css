@@ -45,7 +45,31 @@ select {
 
 .tonnetz {
     height: 300px;
-    width: 50%;
+    width: 400px;
+}
+
+.contour {
+    height: 300px;
+    flex-grow: 1;
+}
+
+.contour-grid-major {
+    paint-order: stroke;
+    stroke-width: 0;
+    fill: #c5c8c6;
+}
+
+.contour-grid-minor {
+    paint-order: stroke;
+    stroke-width: 0;
+    fill: #808080;
+}
+
+.contour-line {
+    paint-order: stroke;
+    stroke-width: 3;
+    stroke: #c5c8c6;
+    fill: #c5c8c6;
 }
 
 .tonnetz-circle {

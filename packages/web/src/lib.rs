@@ -10,6 +10,7 @@ use js::IsValue;
 pub use midi::*;
 pub use navigator::Navigator;
 pub use node::Node;
+pub use performance::Performance;
 pub use svg::*;
 
 mod body;
@@ -24,6 +25,7 @@ mod macros;
 mod midi;
 mod navigator;
 mod node;
+mod performance;
 mod svg;
 
 pub trait IsElement: js::Upcast<Supertype = HtmlElement> {

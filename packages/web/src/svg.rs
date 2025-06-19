@@ -8,6 +8,40 @@ impl SVGElement {
     }
 }
 
+js::inheritance!(SVGAnimationElement: SVGElement);
+
+js::inheritance!(SVGAnimateElement: SVGAnimationElement);
+
+unsafe impl IsElementSvg for SVGAnimateElement {
+    const TAG_NAME: &'static str = "animate";
+}
+
+impl SVGAnimateElement {
+    pub fn set_attribute_name(&self, value: &js::String) {
+        self.set_attribute(&"attributeName".into(), value);
+    }
+
+    pub fn set_begin(&self, value: &js::String) {
+        self.set_attribute(&"begin".into(), value);
+    }
+
+    pub fn set_dur(&self, value: &js::String) {
+        self.set_attribute(&"dur".into(), value);
+    }
+
+    pub fn set_from(&self, value: &js::String) {
+        self.set_attribute(&"from".into(), value);
+    }
+
+    pub fn set_to(&self, value: &js::String) {
+        self.set_attribute(&"to".into(), value);
+    }
+
+    pub fn set_fill(&self, value: &js::String) {
+        self.set_attribute(&"fill".into(), value);
+    }
+}
+
 js::inheritance!(SVGGraphicsElement: SVGElement);
 
 js::inheritance!(SVGGeometryElement: SVGGraphicsElement);
@@ -45,6 +79,14 @@ impl SVGRectElement {
 
     pub fn set_opacity(&self, x: &js::Value) {
         self.set_attribute(&"opacity".into(), x);
+    }
+
+    pub fn set_rx(&self, x: &js::Value) {
+        self.set_attribute(&"rx".into(), x);
+    }
+
+    pub fn set_ry(&self, x: &js::Value) {
+        self.set_attribute(&"ry".into(), x);
     }
 
     pub fn set_x(&self, x: &js::Value) {

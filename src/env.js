@@ -16,8 +16,16 @@ function $Integer$from_u32(integer) {
     return HEAP.add(integer);
 }
 
+function $Integer$from_i32(integer) {
+    return HEAP.add(integer);
+}
+
 function $Float$from_f64(float) {
     return HEAP.add(float);
+}
+
+function $Float$to_f64(index) {
+    return HEAP.get(index);
 }
 
 function $Object$call(object, property, args) {
@@ -40,6 +48,10 @@ function $Object$get(object, property, value) {
 
 function $Object$set(object, property, value) {
     HEAP.get(object)[HEAP.get(property)] = HEAP.get(value);
+}
+
+function $Performance$now() {
+    return performance.now();
 }
 
 function $String$from_str(ptr, len) {

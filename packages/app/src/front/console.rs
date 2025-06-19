@@ -53,7 +53,12 @@ pub struct Initialize {
 }
 
 impl React<ActiveNotesChanged> for Console {
-    fn react(&mut self, ActiveNotesChanged { held, sustained }: ActiveNotesChanged) {
+    fn react(
+        &mut self,
+        ActiveNotesChanged {
+            held, sustained, ..
+        }: ActiveNotesChanged,
+    ) {
         let Some(state) = &mut self.state else {
             return;
         };

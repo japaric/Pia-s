@@ -84,8 +84,8 @@ struct State {
     last_selected: Option<js::String>,
 }
 
-fn onmidimessage(message: MIDIMessageEvent) {
-    let data = message.data();
+fn onmidimessage(event: MIDIMessageEvent) {
+    let data = event.data();
     // only interested in NoteOn, NoteOff and ControlChange messages which are 3-byte long
     if data.length() != 3 {
         return;
@@ -96,14 +96,15 @@ fn onmidimessage(message: MIDIMessageEvent) {
 
     let Some(message) = parse(buf) else { return };
 
+    let timestamp = event.timestamp();
     match message {
-        MidiMessage::NoteOn(note) => Broker::publish(NoteOn(note)),
-        MidiMessage::NoteOff(note) => Broker::publish(NoteOff(note)),
+        MidiMessage::NoteOn(note) => Broker::publish(NoteOn(note, timestamp)),
+        MidiMessage::NoteOff(note) => Broker::publish(NoteOff(note, timestamp)),
         MidiMessage::SustainPedal(on) => {
             if on {
                 Broker::publish(HoldPedalPressed)
             } else {
-                Broker::publish(HoldPedalReleased)
+                Broker::publish(HoldPedalReleased(timestamp))
             }
         }
     }

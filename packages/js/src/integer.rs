@@ -12,3 +12,14 @@ impl From<u32> for Integer {
         unsafe { ff(value).downcast() }
     }
 }
+
+impl From<i32> for Integer {
+    fn from(value: i32) -> Self {
+        unsafe extern "C" {
+            #[link_name = "$Integer$from_i32"]
+            fn ff(integer: i32) -> Value;
+        }
+
+        unsafe { ff(value).downcast() }
+    }
+}

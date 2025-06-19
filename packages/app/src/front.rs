@@ -5,6 +5,7 @@ use crate::{class::Class, html};
 pub mod canvas;
 pub mod cof;
 pub mod console;
+pub mod contour;
 pub mod settings;
 pub mod tonnetz;
 
@@ -13,6 +14,7 @@ pub fn initialize(parent: &Node, midi_access: MIDIAccess) {
     canvas::initialize(parent);
     let row = html::div(parent, Class::ColumnContainer);
     tonnetz::initialize(&row);
+    contour::initialize(&row);
     cof::initialize(&row);
     console::initialize(parent);
 }

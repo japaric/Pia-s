@@ -1,7 +1,7 @@
 use js::Float;
 use web::{
-    Document, DominantBaseline, Node, SVGEllipseElement, SVGPathElement, SVGRectElement,
-    SVGSVGElement, SVGTextElement, TextAnchor,
+    Document, DominantBaseline, Node, SVGAnimateElement, SVGEllipseElement, SVGPathElement,
+    SVGRectElement, SVGSVGElement, SVGTextElement, TextAnchor,
 };
 
 use crate::{class::Class, html};
@@ -25,6 +25,27 @@ pub fn path(svg: &SVGSVGElement, class: Class, d: &str) -> SVGPathElement {
 
     svg.append_child(&path);
     path
+}
+
+pub fn animate(
+    svg: &Node,
+    attribute_name: &js::String,
+    begin: &js::String,
+    duration: &js::String,
+    from: &js::String,
+    to: &js::String,
+) -> SVGAnimateElement {
+    let animate = Document.create_element_ns::<SVGAnimateElement>();
+
+    animate.set_attribute_name(attribute_name);
+    animate.set_begin(begin);
+    animate.set_dur(duration);
+    animate.set_from(from);
+    animate.set_to(to);
+
+    svg.append_child(&animate);
+
+    animate
 }
 
 pub fn circle(
