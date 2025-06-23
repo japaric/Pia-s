@@ -1,13 +1,13 @@
 use alloc::collections::btree_map::BTreeMap;
 use alloc::format;
 use alloc::vec::Vec;
-use music::{Interval, Note};
+use music::{Interval, Note, Notes};
 use spur::{Message, Publish, React};
 use web::{Node, Performance, SVGAnimateElement, SVGRectElement, SVGSVGElement};
 
 use crate::broker::Broker;
 use crate::class::Class;
-use crate::messages::ActiveNotesChanged;
+use crate::messages::{NoteOff, NoteOn};
 use crate::svg;
 
 pub(super) fn initialize(parent: &Node) {
@@ -39,69 +39,47 @@ impl React<Initialize> for Contour {
 
 struct State {
     canvas: Canvas,
-    current: Option<Note>,
     begin_zero: f64,
+    held: Notes,
 }
 
 impl State {
     fn new(canvas: Canvas) -> Self {
         Self {
             canvas,
-            current: None,
             begin_zero: Performance.now(),
+            held: Notes::empty(),
         }
     }
 }
 
-impl React<ActiveNotesChanged> for Contour {
-    fn react(
-        &mut self,
-        ActiveNotesChanged {
-            held,
-            sustained,
-            timestamp,
-        }: ActiveNotesChanged,
-    ) {
+impl React<NoteOn> for Contour {
+    fn react(&mut self, NoteOn(note, timestamp): NoteOn) {
         let Some(state) = &mut self.state else {
             return;
         };
 
-        // `SVGAnimate.begin` does not share its "zero" reference with `performance.now`; instead
-        // it (observally) treats its creation time as "zero". therefore we need to adjust the
-        // timestamps obtained from `performance.now`
         let begin_timestamp = timestamp - state.begin_zero;
+        state.canvas.gc(begin_timestamp);
 
-        let new_highest = held.highest();
-        let last_highest = state.current;
+        state.canvas.on(note, begin_timestamp);
 
-        match (last_highest, new_highest) {
-            (None, Some(new)) => {
-                state.current = Some(new);
+        state.held.insert(note);
+    }
+}
 
-                state.canvas.on(new, begin_timestamp);
-            }
+impl React<NoteOff> for Contour {
+    fn react(&mut self, NoteOff(note, timestamp): NoteOff) {
+        let Some(state) = &mut self.state else {
+            return;
+        };
 
-            (Some(last), None) => {
-                if !sustained.contains(last) {
-                    state.current = None;
+        let begin_timestamp = timestamp - state.begin_zero;
+        state.canvas.gc(begin_timestamp);
 
-                    state.canvas.off(last, begin_timestamp);
-                }
-            }
+        state.canvas.off(note, begin_timestamp);
 
-            (Some(last), Some(new)) => {
-                if last != new {
-                    state.canvas.on(new, begin_timestamp);
-                    state.canvas.off(last, begin_timestamp);
-
-                    state.current = Some(new);
-                }
-            }
-
-            (None, None) => {}
-        }
-
-        state.canvas.gc(begin_timestamp as i64);
+        state.held.remove(note);
     }
 }
 
@@ -261,7 +239,8 @@ impl Canvas {
         };
     }
 
-    fn gc(&mut self, now: i64) {
+    fn gc(&mut self, now: f64) {
+        let now = now as i64;
         self.notes.retain(|deadline, lines| {
             if *deadline > now {
                 true

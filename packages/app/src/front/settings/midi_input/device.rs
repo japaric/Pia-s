@@ -104,7 +104,7 @@ fn onmidimessage(event: MIDIMessageEvent) {
             if on {
                 Broker::publish(HoldPedalPressed)
             } else {
-                Broker::publish(HoldPedalReleased(timestamp))
+                Broker::publish(HoldPedalReleased)
             }
         }
     }

@@ -37,7 +37,8 @@ const _: Broker = {
     const _: Tonnetz = Tonnetz::new();
 
     #[subscribed(to = crate::front::contour::Initialize)]
-    #[subscribed(to = crate::messages::ActiveNotesChanged)]
+    #[subscribed(to = crate::messages::NoteOff)]
+    #[subscribed(to = crate::messages::NoteOn)]
     const _: Contour = Contour::new();
 
     #[subscribed(to = crate::front::cof::Initialize)]

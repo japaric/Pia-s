@@ -6,7 +6,6 @@ use spur::Message;
 pub struct ActiveNotesChanged {
     pub held: Notes,
     pub sustained: Notes,
-    pub timestamp: f64,
 }
 
 #[derive(Clone, Message)]
@@ -20,14 +19,14 @@ pub struct NewScaleTonicSelected(pub usize);
 #[derive(Clone, Message)]
 pub struct NewScaleTypeSelected(pub usize);
 
-#[derive(Message)]
+#[derive(Clone, Message)]
 pub struct NoteOn(pub Note, pub f64);
 
-#[derive(Message)]
+#[derive(Clone, Message)]
 pub struct NoteOff(pub Note, pub f64);
 
-#[derive(Message)]
+#[derive(Clone, Message)]
 pub struct HoldPedalPressed;
 
-#[derive(Message)]
-pub struct HoldPedalReleased(pub f64);
+#[derive(Clone, Message)]
+pub struct HoldPedalReleased;
