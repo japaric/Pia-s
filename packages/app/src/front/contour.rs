@@ -1,5 +1,6 @@
 use alloc::collections::btree_map::BTreeMap;
 use alloc::format;
+use alloc::vec::Vec;
 use music::{Interval, Note};
 use spur::{Message, Publish, React};
 use web::{Node, Performance, SVGAnimateElement, SVGRectElement, SVGSVGElement};
@@ -99,12 +100,15 @@ impl React<ActiveNotesChanged> for Contour {
 
             (None, None) => {}
         }
+
+        state.canvas.gc(begin_timestamp as i64);
     }
 }
 
 struct Canvas {
     root: SVGSVGElement,
     active: BTreeMap<Note, AnimatedLine>,
+    notes: BTreeMap<i64, Vec<SVGRectElement>>,
 }
 
 struct AnimatedLine {
@@ -150,6 +154,7 @@ impl Canvas {
         Self {
             root: parent.clone(),
             active: BTreeMap::new(),
+            notes: BTreeMap::new(),
         }
     }
 
@@ -225,11 +230,16 @@ impl Canvas {
                 &"0%".into(),
             )
             .set_fill(&freeze_s);
+
+            let deadline = (1000. * (now + DUR)) as i64 + 1;
+            self.notes.entry(deadline).or_default().push(line);
         } else {
             let pct = 100. * (now - start) / DUR;
 
-            let dur_s = format!("{}s", DUR * pct / 100.).as_str().into();
-            let then_s = format!("{}s", start + DUR).as_str().into();
+            let dur = DUR * pct / 100.;
+            let dur_s = format!("{}s", dur).as_str().into();
+            let then = start + DUR;
+            let then_s = format!("{}s", then).as_str().into();
             let pct_s: js::String = format!("{pct}%").as_str().into();
             line.set_width(&pct_s);
 
@@ -245,6 +255,22 @@ impl Canvas {
             .set_fill(&freeze_s);
 
             line.append_child(&translate);
+
+            let deadline = (1000. * (then + dur)) as i64 + 1;
+            self.notes.entry(deadline).or_default().push(line);
         };
+    }
+
+    fn gc(&mut self, now: i64) {
+        self.notes.retain(|deadline, lines| {
+            if *deadline > now {
+                true
+            } else {
+                for line in lines {
+                    self.root.remove_child(line);
+                }
+                false
+            }
+        });
     }
 }
