@@ -1,3 +1,5 @@
+use js::Downcast;
+
 use crate::{Element, IsElementSvg};
 
 js::inheritance!(SVGElement: Element);
@@ -6,7 +8,13 @@ impl SVGElement {
     pub fn set_class_name(&self, name: &js::String) {
         self.set_attribute(&"class".into(), name);
     }
+
+    pub fn view_box(&self) -> SVGAnimatedRect {
+        unsafe { self.get(&"viewBox".into()).unwrap_unchecked().downcast() }
+    }
 }
+
+js::inheritance!(SVGAnimatedRect: SVGElement);
 
 js::inheritance!(SVGAnimationElement: SVGElement);
 
@@ -55,6 +63,10 @@ unsafe impl IsElementSvg for SVGSVGElement {
 impl SVGSVGElement {
     pub fn set_height(&self, height: &js::Value) {
         self.set_attribute(&"height".into(), height);
+    }
+
+    pub fn set_view_box(&self, view_box: &js::String) {
+        self.set_attribute(&"viewBox".into(), view_box);
     }
 
     pub fn set_width(&self, width: &js::Value) {

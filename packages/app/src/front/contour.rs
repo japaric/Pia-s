@@ -1,14 +1,14 @@
 use alloc::collections::btree_map::BTreeMap;
 use alloc::format;
 use alloc::vec::Vec;
-use music::{Interval, Note, Notes};
+use music::{MajorScale, Note, NoteName, Notes};
 use spur::{Message, Publish, React};
 use web::{Node, Performance, SVGAnimateElement, SVGRectElement, SVGSVGElement};
 
 use crate::broker::Broker;
 use crate::class::Class;
 use crate::messages::{NoteOff, NoteOn};
-use crate::svg;
+use crate::{consts, svg};
 
 pub(super) fn initialize(parent: &Node) {
     let canvas = Canvas::new(&svg::svg(parent, Class::Contour, false));
@@ -84,6 +84,7 @@ impl React<NoteOff> for Contour {
 }
 
 struct Canvas {
+    scale: MajorScale,
     root: SVGSVGElement,
     active: BTreeMap<Note, AnimatedLine>,
     notes: BTreeMap<i64, Vec<SVGRectElement>>,
@@ -95,35 +96,49 @@ struct AnimatedLine {
     start: f64,
 }
 
-const CENTER: Note = Note::D5;
 const DUR: f64 = 8.;
+const SEMITONE_GAP: u32 = 10;
+const MIN_NOTE: Note = Note::A0;
+const MAX_NOTE: Note = Note::C8;
 
 impl Canvas {
     fn new(parent: &SVGSVGElement) -> Self {
+        let scale =
+            MajorScale::new(NoteName::CIRCLE_OF_FIFTHS[consts::INITIAL_SCALE_TONIC_INDEX as usize]);
+
         parent.set_height(&js::String::from("300px"));
         parent.set_width(&js::String::from("100%"));
+        parent.set_view_box(&js::String::from("0 340 800 300"));
 
-        let center = 150;
+        for octave in 0..9 {
+            let Ok(p0) = scale.tonic().with_octave(octave) else {
+                continue;
+            };
 
-        let p8 = Interval::P8.as_half_steps() as i32 * 10;
-        for offset in [-p8, 0, p8] {
+            if p0 < MIN_NOTE || p0 > MAX_NOTE {
+                continue;
+            }
+
+            let y = p0.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
+
             svg::rect(
                 parent,
                 Class::ContourGridMajor,
                 &js::Integer::from(0),
-                &js::Integer::from((center + offset) as u32),
+                &js::Integer::from(y),
                 &js::String::from("100%"),
                 &js::Integer::from(1),
             );
-        }
 
-        let p5 = Interval::P5.as_half_steps() as i32 * 10;
-        for offset in [-p5, p5] {
+            let Ok(p5) = p0.step(7) else { continue };
+
+            let y = p5.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
+
             svg::rect(
                 parent,
                 Class::ContourGridMinor,
                 &js::Integer::from(0),
-                &js::Integer::from((center + offset) as u32),
+                &js::Integer::from(y),
                 &js::String::from("100%"),
                 &js::Integer::from(1),
             );
@@ -133,22 +148,25 @@ impl Canvas {
             root: parent.clone(),
             active: BTreeMap::new(),
             notes: BTreeMap::new(),
+            scale,
         }
     }
 
     fn on(&mut self, note: Note, now_ms: f64) {
-        let half_steps = CENTER.distance_to(note) as i32;
+        let y = note.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
 
         let line = svg::rect(
             &self.root,
             Class::ContourLine,
             &js::String::from("100%"),
-            &js::Integer::from(150 - 10 * half_steps),
+            &js::Integer::from(y),
             &js::String::from("0"),
             &js::Integer::from(1),
         );
         line.set_rx(&js::Integer::from(3));
         line.set_ry(&js::Integer::from(3));
+        let degree = self.scale.name2degree(note.name());
+        line.add_class(&js::String::from(degree.as_str()));
 
         let now = now_ms / 1000.;
         let now_s = format!("{}s", now).as_str().into();

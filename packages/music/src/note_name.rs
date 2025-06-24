@@ -1,4 +1,4 @@
-use crate::{Interval, ScaleType, scale::Scale};
+use crate::{Error, Interval, Note, ScaleType, scale::Scale};
 
 #[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 #[cfg_attr(test, derive(Debug))]
@@ -50,6 +50,20 @@ impl NoteName {
             10 => Bb,
             _ => B,
         }
+    }
+
+    pub fn with_octave(&self, octave: i8) -> Result<Note, Error> {
+        if !(0..=8).contains(&octave) {
+            return Err(Error::NoteOutOfRange);
+        }
+
+        if (octave == 8 && *self > NoteName::C) || (octave == 0 && *self < NoteName::A) {
+            return Err(Error::NoteOutOfRange);
+        }
+
+        Ok(Note::from_u8_lossy(
+            ((*self as i8) + 12 * (octave + 1)) as u8,
+        ))
     }
 
     pub fn distance_to(&self, other: Self) -> Interval {
@@ -223,5 +237,14 @@ mod tests {
         assert_eq!("E♯", stringify(F, Gb));
 
         assert_eq!("A♭", stringify(Ab, Ab));
+    }
+
+    #[test]
+    fn with_octave() {
+        assert_eq!(Ok(Note::A0), NoteName::A.with_octave(0));
+        assert_eq!(Ok(Note::C8), NoteName::C.with_octave(8));
+
+        assert_eq!(Err(Error::NoteOutOfRange), NoteName::Ab.with_octave(0));
+        assert_eq!(Err(Error::NoteOutOfRange), NoteName::Db.with_octave(8));
     }
 }

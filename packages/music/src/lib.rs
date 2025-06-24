@@ -28,7 +28,8 @@ pub use notes::Notes;
 pub use scale::Scale;
 pub use scale_type::ScaleType;
 
-#[cfg_attr(test, derive(Debug))]
+#[cfg_attr(test, derive(PartialEq))]
+#[derive(Debug)]
 pub enum Error {
     NoteOutOfRange,
     CannotInvert,

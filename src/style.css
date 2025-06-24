@@ -68,8 +68,8 @@ select {
 .contour-line {
     paint-order: stroke;
     stroke-width: 3;
-    stroke: #c5c8c6;
-    fill: #c5c8c6;
+    stroke: currentColor;
+    fill: currentColor;
 }
 
 .tonnetz-circle {
@@ -180,11 +180,17 @@ svg {
     opacity: 0%;
 }
 
+.degree {
+    color: #1d1f21;
+}
+
 .pressed {
+    fill: currentColor;
     opacity: 100%;
 }
 
 .sustained {
+    fill: currentColor;
     opacity: 80%;
 }
 
@@ -209,62 +215,62 @@ svg {
 
 /* red (primary) */
 .\31 /* = 1 */ {
-    fill: #f98089;
+    color: #f98089;
 }
 
 /* red orange (tertiary) */
 .\35 /* = 5 */ {
-    fill: #ffa894;
+    color: #ffa894;
 }
 
 /* orange (secondary) */
 .\32 /* = 2 */ {
-    fill: #fecc87;
+    color: #fecc87;
 }
 
 /* yellow orange (tertiary) */
 .\36 /* = 6 */ {
-    fill: #f9e380;
+    color: #f9e380;
 }
 
 /* yellow (primary) */
 .\33 /* = 3 */ {
-    fill: #fff490;
+    color: #fff490;
 }
 
 /* yellow green (tertiary) */
 .\37 /* = 7 */ {
-    fill: #eaefac;
+    color: #eaefac;
 }
 
 /* green (secondary) */
 .♯4 {
-    fill: #b7e5a5;
+    color: #b7e5a5;
 }
 
 /* blue green (tertiary) */
 .♭2 {
-    fill: #81e8e5;
+    color: #81e8e5;
 }
 
 /* blue (primary) */
 .♭6 {
-    fill: #88d2f9;
+    color: #88d2f9;
 }
 
 /* blue violet (tertiary) */
 .♭3 {
-    fill: #a8b7e0;
+    color: #a8b7e0;
 }
 
 /* violet (secondary) */
 .♭7 {
-    fill: #c193b8;
+    color: #c193b8;
 }
 
 /* red violet (tertiary) */
 .\34 /* = 4 */ {
-    fill: #f9b7c5;
+    color: #f9b7c5;
 }
 
 .lil-warning {
