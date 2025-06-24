@@ -7,7 +7,7 @@ use tlsf::Tlsf;
 
 use nosync::{Owned, Shared};
 
-const SIZE: usize = 8 * 1024 / mem::size_of::<u32>();
+const SIZE: usize = 16 * 1024 / mem::size_of::<u32>();
 
 pub fn initialize() {
     static MEMORY: Owned<[MaybeUninit<u32>; SIZE]> = Owned::new([MaybeUninit::uninit(); SIZE]);
