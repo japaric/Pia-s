@@ -7,7 +7,7 @@ use web::{Node, Performance, SVGAnimateElement, SVGRectElement, SVGSVGElement};
 
 use crate::broker::Broker;
 use crate::class::Class;
-use crate::messages::{NoteOff, NoteOn};
+use crate::messages::{NewScaleTonicSelected, NoteOff, NoteOn};
 use crate::{consts, svg};
 
 pub(super) fn initialize(parent: &Node) {
@@ -53,6 +53,22 @@ impl State {
     }
 }
 
+impl React<NewScaleTonicSelected> for Contour {
+    fn react(&mut self, NewScaleTonicSelected(index): NewScaleTonicSelected) {
+        let Some(state) = &mut self.state else {
+            return;
+        };
+
+        let new_tonic = NoteName::CIRCLE_OF_FIFTHS[index];
+        if state.canvas.scale.tonic() != new_tonic {
+            state.canvas.scale = MajorScale::new(new_tonic);
+            state.canvas.redraw_grid();
+            state.canvas.gc(Performance.now() - state.begin_zero);
+            state.canvas.recolor_lines();
+        }
+    }
+}
+
 impl React<NoteOn> for Contour {
     fn react(&mut self, NoteOn(note, timestamp): NoteOn) {
         let Some(state) = &mut self.state else {
@@ -85,9 +101,10 @@ impl React<NoteOff> for Contour {
 
 struct Canvas {
     scale: MajorScale,
+    grid: Vec<SVGRectElement>,
     root: SVGSVGElement,
     active: BTreeMap<Note, AnimatedLine>,
-    notes: BTreeMap<i64, Vec<SVGRectElement>>,
+    lines: BTreeMap<i64, Vec<(Note, SVGRectElement)>>,
 }
 
 struct AnimatedLine {
@@ -110,45 +127,70 @@ impl Canvas {
         parent.set_width(&js::String::from("100%"));
         parent.set_view_box(&js::String::from("0 340 800 300"));
 
+        let mut this = Self {
+            grid: Vec::new(),
+            root: parent.clone(),
+            active: BTreeMap::new(),
+            lines: BTreeMap::new(),
+            scale,
+        };
+
+        this.redraw_grid();
+
+        this
+    }
+
+    fn redraw_grid(&mut self) {
+        let tonic = self.scale.tonic();
+
+        for line in &self.grid {
+            self.root.remove_child(line);
+        }
+        self.grid.clear();
+
         for octave in 0..9 {
-            let Ok(p0) = scale.tonic().with_octave(octave) else {
+            let Ok(p0) = tonic.with_octave(octave) else {
                 continue;
             };
 
-            if p0 < MIN_NOTE || p0 > MAX_NOTE {
-                continue;
+            if p0 >= MIN_NOTE || p0 <= MAX_NOTE {
+                let y = p0.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
+
+                let line = svg::rect(
+                    &self.root,
+                    Class::ContourGridMajor,
+                    &js::Integer::from(0),
+                    &js::Integer::from(y),
+                    &js::String::from("100%"),
+                    &js::Integer::from(1),
+                );
+                self.grid.push(line);
             }
-
-            let y = p0.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
-
-            svg::rect(
-                parent,
-                Class::ContourGridMajor,
-                &js::Integer::from(0),
-                &js::Integer::from(y),
-                &js::String::from("100%"),
-                &js::Integer::from(1),
-            );
 
             let Ok(p5) = p0.step(7) else { continue };
 
-            let y = p5.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
+            if p0 >= MIN_NOTE || p0 <= MAX_NOTE {
+                let y = p5.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
 
-            svg::rect(
-                parent,
-                Class::ContourGridMinor,
-                &js::Integer::from(0),
-                &js::Integer::from(y),
-                &js::String::from("100%"),
-                &js::Integer::from(1),
-            );
+                let line = svg::rect(
+                    &self.root,
+                    Class::ContourGridMinor,
+                    &js::Integer::from(0),
+                    &js::Integer::from(y),
+                    &js::String::from("100%"),
+                    &js::Integer::from(1),
+                );
+                self.grid.push(line);
+            }
         }
+    }
 
-        Self {
-            root: parent.clone(),
-            active: BTreeMap::new(),
-            notes: BTreeMap::new(),
-            scale,
+    fn recolor_lines(&self) {
+        for pairs in self.lines.values() {
+            for (note, line) in pairs {
+                let degree = self.scale.name2degree(note.name());
+                line.add_class(&js::String::from(degree.as_str()));
+            }
         }
     }
 
@@ -228,7 +270,7 @@ impl Canvas {
             .set_fill(&freeze_s);
 
             let deadline = (1000. * (now + DUR)) as i64 + 1;
-            self.notes.entry(deadline).or_default().push(line);
+            self.lines.entry(deadline).or_default().push((note, line));
         } else {
             let pct = 100. * (now - start) / DUR;
 
@@ -253,17 +295,17 @@ impl Canvas {
             line.append_child(&translate);
 
             let deadline = (1000. * (then + dur)) as i64 + 1;
-            self.notes.entry(deadline).or_default().push(line);
+            self.lines.entry(deadline).or_default().push((note, line));
         };
     }
 
     fn gc(&mut self, now: f64) {
         let now = now as i64;
-        self.notes.retain(|deadline, lines| {
+        self.lines.retain(|deadline, lines| {
             if *deadline > now {
                 true
             } else {
-                for line in lines {
+                for (_note, line) in lines {
                     self.root.remove_child(line);
                 }
                 false
