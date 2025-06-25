@@ -81,6 +81,8 @@ impl React<NoteOn> for Contour {
         state.canvas.on(note, begin_timestamp);
 
         state.held.insert(note);
+
+        state.canvas.maybe_pan(state.begin_zero);
     }
 }
 
@@ -100,11 +102,14 @@ impl React<NoteOff> for Contour {
 }
 
 struct Canvas {
-    scale: MajorScale,
-    grid: Vec<SVGRectElement>,
-    root: SVGSVGElement,
     active: BTreeMap<Note, AnimatedLine>,
+    current_y: u32,
+    grid: Vec<SVGRectElement>,
     lines: BTreeMap<i64, Vec<(Note, SVGRectElement)>>,
+    next_pan: f64,
+    root: SVGSVGElement,
+    scale: MajorScale,
+    view_box_animate: Option<SVGAnimateElement>,
 }
 
 struct AnimatedLine {
@@ -117,6 +122,10 @@ const DUR: f64 = 8.;
 const SEMITONE_GAP: u32 = 10;
 const MIN_NOTE: Note = Note::A0;
 const MAX_NOTE: Note = Note::C8;
+const HEIGHT: u32 = 300;
+const PAN_COOLDOWN: f64 = 1000.; // ms
+const WIDTH: u32 = 800;
+const PAN_DUR: &str = "1s";
 
 impl Canvas {
     fn new(parent: &SVGSVGElement) -> Self {
@@ -125,19 +134,83 @@ impl Canvas {
 
         parent.set_height(&js::String::from("300px"));
         parent.set_width(&js::String::from("100%"));
-        parent.set_view_box(&js::String::from("0 340 800 300"));
+        let y = note2y(Note::C4);
+        parent.set_view_box(&js::String::from(
+            format!("0 {y} {WIDTH} {HEIGHT}").as_str(),
+        ));
 
         let mut this = Self {
-            grid: Vec::new(),
-            root: parent.clone(),
             active: BTreeMap::new(),
+            current_y: y,
+            grid: Vec::new(),
             lines: BTreeMap::new(),
+            next_pan: 0.,
+            root: parent.clone(),
             scale,
+            view_box_animate: None,
         };
 
         this.redraw_grid();
 
         this
+    }
+
+    fn maybe_pan(&mut self, begin_zero: f64) {
+        let svg_now = Performance.now() - begin_zero;
+
+        if self.next_pan > svg_now {
+            return;
+        }
+
+        let mut active = Notes::empty();
+        for pairs in self.lines.values() {
+            for (note, _) in pairs {
+                active.insert(*note);
+            }
+        }
+
+        if active.len() < 3 {
+            return;
+        }
+
+        let highest = active.highest().unwrap();
+
+        let tonic = self.scale.tonic();
+        let highest_octave = highest.octave();
+        let mut tonic_below = tonic.with_octave(highest_octave).unwrap();
+        if tonic_below >= highest {
+            tonic_below = tonic.with_octave(highest_octave - 1).unwrap();
+        }
+        let next_y = note2y(tonic_below);
+
+        if next_y == self.current_y {
+            return;
+        }
+
+        if let Some(old_animate) = self.view_box_animate.take() {
+            self.root.remove_child(&old_animate);
+        }
+
+        let begin = &js::String::from(format!("{}s", svg_now / 1000.).as_str());
+        let from = &js::String::from(format!("0 {} {WIDTH} {HEIGHT}", self.current_y).as_str());
+        let dur = &js::String::from(PAN_DUR);
+        let to = &js::String::from(format!("0 {} {WIDTH} {HEIGHT}", next_y).as_str());
+
+        let animate = svg::animate(
+            &self.root,
+            &js::String::from("viewBox"),
+            begin,
+            dur,
+            from,
+            to,
+        );
+        animate.set_fill(&js::String::from("freeze"));
+
+        self.view_box_animate = Some(animate);
+
+        self.current_y = next_y;
+
+        self.next_pan = svg_now + PAN_COOLDOWN;
     }
 
     fn redraw_grid(&mut self) {
@@ -312,4 +385,8 @@ impl Canvas {
             }
         });
     }
+}
+
+fn note2y(note: Note) -> u32 {
+    note.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2 - HEIGHT / 2
 }
