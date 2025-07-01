@@ -1,6 +1,6 @@
 # Pia's
 
-![Web application showing a musical keyboard with some notes highlighted](./images/screenshot.png)
+![Web application showing a musical keyboard with some notes highlighted](./images/screenshot.jpg)
 
 `Pia's` stands for "Pia's Interval Analysis Screen". `Pia's` is a MIDI analysis web application. 
 
@@ -17,9 +17,10 @@ In Japanese, `Pia's` can be written as ぴあの which is pronounced "piano" (�
 - Identifies common chords and their extensions.
 - Pressed / held keys are colored according to their relationship to the tonic center, i.e. each scale degree has its own color.
 - Highlights the overtones of the pressed note.
-- Highlights intervals played below an "low interval limit"
+- Highlights intervals played below their "low interval limit"
 - Visualization of chord quality in the form of a Tonnetz
 - Roman numeral analysis in the form of a circle of fifths
+- Visualization of recently played notes in a horizontal "piano roll" that auto-pans to keep the highest notes in view
 
 **NOTE** `Pia's` does not produce audio nor MIDI output. Do not expect sound to come from it..
 
