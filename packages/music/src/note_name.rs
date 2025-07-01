@@ -53,11 +53,11 @@ impl NoteName {
     }
 
     pub fn with_octave(&self, octave: i8) -> Result<Note, Error> {
-        if !(0..=8).contains(&octave) {
+        if !(-1..=9).contains(&octave) {
             return Err(Error::NoteOutOfRange);
         }
 
-        if (octave == 8 && *self > NoteName::C) || (octave == 0 && *self < NoteName::A) {
+        if octave == 9 && *self > NoteName::G {
             return Err(Error::NoteOutOfRange);
         }
 
@@ -241,10 +241,16 @@ mod tests {
 
     #[test]
     fn with_octave() {
+        // extremes of piano range
         assert_eq!(Ok(Note::A0), NoteName::A.with_octave(0));
         assert_eq!(Ok(Note::C8), NoteName::C.with_octave(8));
 
-        assert_eq!(Err(Error::NoteOutOfRange), NoteName::Ab.with_octave(0));
-        assert_eq!(Err(Error::NoteOutOfRange), NoteName::Db.with_octave(8));
+        // extreme of MIDI range
+        assert_eq!(Ok(Note::from_u8_lossy(0)), NoteName::C.with_octave(-1));
+        assert_eq!(Ok(Note::from_u8_lossy(127)), NoteName::G.with_octave(9));
+
+        // outside MIDI range
+        assert_eq!(Err(Error::NoteOutOfRange), NoteName::B.with_octave(-2));
+        assert_eq!(Err(Error::NoteOutOfRange), NoteName::Ab.with_octave(9));
     }
 }

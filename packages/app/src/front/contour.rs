@@ -103,7 +103,7 @@ impl React<NoteOff> for Contour {
 
 struct Canvas {
     active: BTreeMap<Note, AnimatedLine>,
-    current_y: u32,
+    current_y: i32,
     grid: Vec<SVGRectElement>,
     lines: BTreeMap<i64, Vec<(Note, SVGRectElement)>>,
     next_pan: f64,
@@ -119,10 +119,10 @@ struct AnimatedLine {
 }
 
 const DUR: f64 = 8.;
-const SEMITONE_GAP: u32 = 10;
-const MIN_NOTE: Note = Note::A0;
-const MAX_NOTE: Note = Note::C8;
-const HEIGHT: u32 = 300;
+const SEMITONE_GAP: i32 = 10;
+const MIN_PIANO_NOTE: Note = Note::A0;
+const MAX_PIANO_NOTE: Note = Note::C8;
+const HEIGHT: i32 = 300;
 const PAN_COOLDOWN: f64 = 1000.; // ms
 const WIDTH: u32 = 800;
 const PAN_DUR: &str = "1s";
@@ -177,9 +177,14 @@ impl Canvas {
 
         let tonic = self.scale.tonic();
         let highest_octave = highest.octave();
-        let mut tonic_below = tonic.with_octave(highest_octave).unwrap();
+        let truncated_octave = highest_octave
+            // don't show the octave above `MIN_PIANO_NOTE`
+            .min(MAX_PIANO_NOTE.octave() - 1)
+            // don't show the octave below `MIN_PIANO_NOTE`
+            .max(MIN_PIANO_NOTE.octave() + 1);
+        let mut tonic_below = tonic.with_octave(truncated_octave).unwrap();
         if tonic_below >= highest {
-            tonic_below = tonic.with_octave(highest_octave - 1).unwrap();
+            tonic_below = tonic.with_octave(truncated_octave - 1).unwrap();
         }
         let next_y = note2y(tonic_below);
 
@@ -221,40 +226,38 @@ impl Canvas {
         }
         self.grid.clear();
 
-        for octave in 0..9 {
+        let min_octave = -1;
+        let max_octave = MAX_PIANO_NOTE.octave();
+        for octave in min_octave..=max_octave {
             let Ok(p0) = tonic.with_octave(octave) else {
                 continue;
             };
 
-            if p0 >= MIN_NOTE || p0 <= MAX_NOTE {
-                let y = p0.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
+            let y = p0.distance_to(Note::MAX) as i32 * SEMITONE_GAP + SEMITONE_GAP / 2;
 
-                let line = svg::rect(
-                    &self.root,
-                    Class::ContourGridMajor,
-                    &js::Integer::from(0),
-                    &js::Integer::from(y),
-                    &js::String::from("100%"),
-                    &js::Integer::from(1),
-                );
-                self.grid.push(line);
-            }
+            let line = svg::rect(
+                &self.root,
+                Class::ContourGridMajor,
+                &js::Integer::from(0),
+                &js::Integer::from(y),
+                &js::String::from("100%"),
+                &js::Integer::from(1),
+            );
+            self.grid.push(line);
 
             let Ok(p5) = p0.step(7) else { continue };
 
-            if p0 >= MIN_NOTE || p0 <= MAX_NOTE {
-                let y = p5.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
+            let y = p5.distance_to(Note::MAX) as i32 * SEMITONE_GAP + SEMITONE_GAP / 2;
 
-                let line = svg::rect(
-                    &self.root,
-                    Class::ContourGridMinor,
-                    &js::Integer::from(0),
-                    &js::Integer::from(y),
-                    &js::String::from("100%"),
-                    &js::Integer::from(1),
-                );
-                self.grid.push(line);
-            }
+            let line = svg::rect(
+                &self.root,
+                Class::ContourGridMinor,
+                &js::Integer::from(0),
+                &js::Integer::from(y),
+                &js::String::from("100%"),
+                &js::Integer::from(1),
+            );
+            self.grid.push(line);
         }
     }
 
@@ -268,7 +271,7 @@ impl Canvas {
     }
 
     fn on(&mut self, note: Note, now_ms: f64) {
-        let y = note.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2;
+        let y = note.distance_to(Note::MAX) as i32 * SEMITONE_GAP + SEMITONE_GAP / 2;
 
         let line = svg::rect(
             &self.root,
@@ -387,6 +390,6 @@ impl Canvas {
     }
 }
 
-fn note2y(note: Note) -> u32 {
-    note.distance_to(MAX_NOTE) as u32 * SEMITONE_GAP + SEMITONE_GAP / 2 - HEIGHT / 2
+fn note2y(note: Note) -> i32 {
+    note.distance_to(Note::MAX) as i32 * SEMITONE_GAP + SEMITONE_GAP / 2 - HEIGHT / 2
 }

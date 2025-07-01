@@ -10,6 +10,8 @@ pub struct Note(u8);
 
 #[allow(non_upper_case_globals)]
 impl Note {
+    pub const MAX: Self = Note(127);
+
     pub const A0: Self = Note(21);
 
     pub const Bb1: Self = Note(34);
@@ -54,7 +56,7 @@ impl Note {
 
     pub const C8: Self = Note(108);
 
-    pub fn from_u8_lossy(value: u8) -> Self {
+    pub const fn from_u8_lossy(value: u8) -> Self {
         Note(value & 0x7f)
     }
 
@@ -117,5 +119,10 @@ mod tests {
     fn distance_to() {
         assert_eq!(127, Note(0).distance_to(Note(127)));
         assert_eq!(-127, Note(127).distance_to(Note(0)));
+    }
+
+    #[test]
+    fn step_beyond_max() {
+        assert!(Note(127).step(1).is_err());
     }
 }
