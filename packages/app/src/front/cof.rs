@@ -218,14 +218,17 @@ impl Items {
         const R3: f64 = 50.;
 
         let class_label = Class::CofLabel.as_str().into();
+        let degree_label = js::String::from(degree.as_str());
 
         let major = Item::draw(parent, (R1, R2), start, end, text);
         major.label.set_text_content(&degree.roman_major().into());
         major.label.set_class_name(&class_label);
+        major.label.add_class(&degree_label);
 
         let minor = Item::draw(parent, (R2, R3), start, end, text);
         minor.label.set_text_content(&degree.roman_minor().into());
         minor.label.set_class_name(&class_label);
+        minor.label.add_class(&degree_label);
 
         Items { major, minor }
     }

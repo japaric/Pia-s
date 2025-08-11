@@ -124,7 +124,7 @@ select {
 }
 
 .cof-label.highlight {
-    fill: #c5c8c6;
+    fill: currentColor;
 }
 
 .cof-label:not(.highlight) {
