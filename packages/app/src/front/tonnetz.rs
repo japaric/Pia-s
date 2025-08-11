@@ -170,6 +170,7 @@ impl Canvas {
 
                 let label = svg::text(parent, &cx_px, &cy_px);
                 label.set_class_name(&label_class);
+                label.add_class(&js::String::from(degree.as_str()));
                 label.set_text_content(&degree.as_str().into());
 
                 let item = Item {

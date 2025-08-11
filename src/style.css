@@ -96,7 +96,7 @@ select {
 }
 
 .tonnetz-label.highlight {
-    fill: #c5c8c6;
+    fill: currentColor;
 }
 
 .tonnetz-label:not(.highlight) {
