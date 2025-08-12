@@ -12,6 +12,24 @@ body {
 }
 /* end of reset style */
 
+:root {
+    /* constants */
+    /* RYB (material colors) color wheel   */
+    /* P: Primary; S: Secondary; T: Tertiary */
+    --color-p-red: #feb6b7;
+    --color-t-red-orange: #fccabf;
+    --color-s-orange: #fbd1b9;
+    --color-t-yellow-orange: #fcdeba;
+    --color-p-yellow: #faf5b5;
+    --color-t-yellow-green: #deeebf;
+    --color-s-green: #b9e6c7;
+    --color-t-blue-green: #bef1ea;
+    --color-p-blue: #c0c4e7;
+    --color-t-blue-violet: #c4bcd4;
+    --color-s-violet: #b395cb;
+    --color-t-red-violet: #e0bedf;
+}
+
 body {
     background-color: #1d1f21;
     color: #c5c8c6;
@@ -214,64 +232,65 @@ svg {
     padding-top: 0.25em;
 }
 
+/* scale degree in ascending perfect fifths */
 /* red (primary) */
 .\31 /* = 1 */ {
-    color: #f98089;
+    color: var(--color-p-yellow);
 }
 
 /* red orange (tertiary) */
 .\35 /* = 5 */ {
-    color: #ffa894;
+    color: var(--color-t-yellow-orange);
 }
 
 /* orange (secondary) */
 .\32 /* = 2 */ {
-    color: #fecc87;
+    color: var(--color-s-orange);
 }
 
 /* yellow orange (tertiary) */
 .\36 /* = 6 */ {
-    color: #f9e380;
+    color: var(--color-t-red-orange);
 }
 
 /* yellow (primary) */
 .\33 /* = 3 */ {
-    color: #fff490;
+    color: var(--color-p-red);
 }
 
 /* yellow green (tertiary) */
 .\37 /* = 7 */ {
-    color: #eaefac;
+    color: var(--color-t-red-violet);
 }
 
 /* green (secondary) */
 .♯4 {
-    color: #b7e5a5;
+    color: var(--color-s-violet);
 }
 
 /* blue green (tertiary) */
 .♭2 {
-    color: #81e8e5;
+    color: var(--color-t-blue-violet);
 }
 
 /* blue (primary) */
 .♭6 {
-    color: #88d2f9;
+    color: var(--color-p-blue);
 }
 
 /* blue violet (tertiary) */
 .♭3 {
-    color: #a8b7e0;
+    color: var(--color-t-blue-green);
 }
 
 /* violet (secondary) */
 .♭7 {
-    color: #c193b8;
+    color: var(--color-s-green);
 }
 
 /* red violet (tertiary) */
 .\34 /* = 4 */ {
-    color: #f9b7c5;
+    color: var(--color-t-yellow-green);
 }
 
 .lil-warning {
