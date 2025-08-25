@@ -1,7 +1,7 @@
 use alloc::collections::btree_map::BTreeMap;
 use alloc::format;
 use alloc::string::ToString;
-use music::{Chord, Interval, Note, NoteName, NoteNames, Notes, Scale, ScaleType};
+use music::{Chord, Interval, MajorScale, Note, NoteName, NoteNames, Notes, Scale, ScaleType};
 use spur::{Message, Publish as _, React};
 use web::{HtmlDivElement, Node};
 
@@ -90,12 +90,15 @@ impl React<NewScaleTypeSelected> for Console {
 
 fn display_notes(notes: &HtmlDivElement, scale: Scale, all: &Notes) {
     let mut is_first = true;
+    let major_scale = MajorScale::new(scale.tonic);
     for note in all.iter() {
         if !is_first {
             html::span(notes, " ");
         }
 
-        html::span(notes, &note.display(scale).to_string());
+        let span = html::span(notes, &note.display(scale).to_string());
+        let degree = major_scale.name2degree(note.name());
+        span.set_class_name(&degree.as_str().into());
 
         is_first = false;
     }
